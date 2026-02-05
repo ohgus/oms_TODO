@@ -78,9 +78,8 @@ export function HomePage({ container }: HomePageProps) {
     await deleteTodo(id);
   };
 
-  const handleEdit = (todo: Todo) => {
-    // TODO: Implement edit functionality
-    console.log("Edit todo:", todo);
+  const handleEdit = (_todo: Todo) => {
+    // TODO: Implement edit functionality in a future phase
   };
 
   const handleStatusFilterChange = (status: StatusFilterType) => {
@@ -102,7 +101,7 @@ export function HomePage({ container }: HomePageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" data-testid="home-page">
       <div className="max-w-2xl mx-auto px-4 py-6 sm:py-8">
         {/* Header */}
         <header className="flex items-center gap-3 mb-6">
@@ -130,7 +129,7 @@ export function HomePage({ container }: HomePageProps) {
         {/* Todo List */}
         <section aria-label="Todo list">
           {isLoading ? (
-            <div className="text-center py-8">
+            <div className="text-center py-8" data-testid="loading-indicator">
               <p className="text-muted-foreground">Loading...</p>
             </div>
           ) : (

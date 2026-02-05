@@ -64,6 +64,7 @@ export function TodoForm({
             aria-invalid={!!error}
             aria-describedby={error ? "title-error" : undefined}
             className="min-h-11"
+            data-testid="todo-input"
           />
         </div>
 
@@ -74,6 +75,7 @@ export function TodoForm({
             disabled={isSubmitting}
             className="h-11 px-3 rounded-md border border-input bg-background text-sm"
             aria-label="Category"
+            data-testid="category-select"
           >
             <option value="">No category</option>
             {categories.map((category) => (
@@ -89,6 +91,7 @@ export function TodoForm({
           disabled={isSubmitting}
           className="min-h-11 min-w-11"
           aria-label="Add todo"
+          data-testid="add-button"
         >
           <Plus className="h-4 w-4 sm:mr-2" />
           <span className="hidden sm:inline">Add</span>

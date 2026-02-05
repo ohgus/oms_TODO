@@ -20,6 +20,7 @@ export function CategoryFilter({
       role="group"
       aria-label="Category filter"
       className="flex gap-2 overflow-x-auto pb-2 -mb-2 scrollbar-thin"
+      data-testid="category-filter"
     >
       <Button
         variant="outline"
@@ -30,6 +31,7 @@ export function CategoryFilter({
           "min-h-11 shrink-0 transition-colors",
           isAllSelected && "bg-primary text-primary-foreground border-primary"
         )}
+        data-testid="category-all"
       >
         All
       </Button>
@@ -47,6 +49,7 @@ export function CategoryFilter({
               "min-h-11 shrink-0 gap-2 transition-colors",
               isSelected && "bg-primary text-primary-foreground border-primary"
             )}
+            data-testid={`category-${category.id}`}
           >
             <span
               data-testid="category-color"

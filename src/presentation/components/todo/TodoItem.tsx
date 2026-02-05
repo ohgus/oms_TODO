@@ -23,13 +23,14 @@ export function TodoItem({
   categoryColor,
 }: TodoItemProps) {
   return (
-    <div className="flex flex-col gap-2 p-3 bg-card rounded-lg border sm:flex-row sm:items-center sm:gap-4">
+    <div className="flex flex-col gap-2 p-3 bg-card rounded-lg border sm:flex-row sm:items-center sm:gap-4" data-testid="todo-item">
       <div className="flex items-center gap-3 flex-1 min-w-0">
         <div data-testid="checkbox-wrapper" className="flex items-center justify-center min-h-11 min-w-11">
           <Checkbox
             checked={todo.completed}
             onCheckedChange={() => onToggleComplete(todo.id)}
             aria-label={`Mark "${todo.title}" as ${todo.completed ? "incomplete" : "complete"}`}
+            data-testid="todo-checkbox"
           />
         </div>
 
@@ -39,6 +40,7 @@ export function TodoItem({
               "text-sm font-medium truncate",
               todo.completed && "line-through text-muted-foreground"
             )}
+            data-testid="todo-title"
           >
             {todo.title}
           </p>
@@ -73,6 +75,7 @@ export function TodoItem({
             className="min-h-11 min-w-11 h-9 w-9"
             onClick={() => onEdit(todo)}
             aria-label={`Edit "${todo.title}"`}
+            data-testid="edit-button"
           >
             <Pencil className="h-4 w-4" />
           </Button>
@@ -82,6 +85,7 @@ export function TodoItem({
             className="min-h-11 min-w-11 h-9 w-9 text-destructive hover:text-destructive"
             onClick={() => onDelete(todo.id)}
             aria-label={`Delete "${todo.title}"`}
+            data-testid="delete-button"
           >
             <Trash2 className="h-4 w-4" />
           </Button>

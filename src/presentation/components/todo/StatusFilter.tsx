@@ -20,6 +20,7 @@ export function StatusFilter({ selectedStatus, onSelect }: StatusFilterProps) {
       role="group"
       aria-label="Status filter"
       className="flex gap-1 p-1 bg-muted rounded-lg"
+      data-testid="status-filter"
     >
       {statuses.map(({ value, label }) => (
         <Button
@@ -32,6 +33,7 @@ export function StatusFilter({ selectedStatus, onSelect }: StatusFilterProps) {
             "min-h-11 flex-1 rounded-md transition-colors",
             selectedStatus === value && "bg-background shadow-sm"
           )}
+          data-testid={`filter-${value}`}
         >
           {label}
         </Button>

@@ -46,7 +46,7 @@ export function TodoList({
 
   if (todos.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
+      <div className="flex flex-col items-center justify-center py-12 text-center" data-testid="empty-message">
         <p className="text-muted-foreground">{emptyMessage}</p>
       </div>
     );
@@ -62,7 +62,7 @@ export function TodoList({
   };
 
   return (
-    <ul role="list" className="space-y-2">
+    <ul role="list" className="space-y-2" data-testid="todo-list">
       {todos.map((todo) => {
         const { name, color } = getCategoryInfo(todo.categoryId);
         return (
