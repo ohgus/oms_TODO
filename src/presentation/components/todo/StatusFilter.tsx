@@ -1,5 +1,4 @@
 import { Button } from "@presentation/components/ui/button";
-import { cn } from "@shared/utils/cn";
 
 export type TodoStatus = "all" | "active" | "completed";
 
@@ -25,14 +24,11 @@ export function StatusFilter({ selectedStatus, onSelect }: StatusFilterProps) {
       {statuses.map(({ value, label }) => (
         <Button
           key={value}
-          variant="ghost"
+          variant={selectedStatus === value ? "default" : "ghost"}
           size="sm"
           onClick={() => onSelect(value)}
           aria-pressed={selectedStatus === value}
-          className={cn(
-            "min-h-11 flex-1 rounded-md transition-colors",
-            selectedStatus === value && "bg-background shadow-sm"
-          )}
+          className="min-h-11 flex-1 rounded-md transition-colors"
           data-testid={`filter-${value}`}
         >
           {label}

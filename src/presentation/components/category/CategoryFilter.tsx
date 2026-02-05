@@ -1,6 +1,5 @@
 import type { Category } from "@domain/entities/Category";
 import { Button } from "@presentation/components/ui/button";
-import { cn } from "@shared/utils/cn";
 
 export interface CategoryFilterProps {
   categories: Category[];
@@ -23,14 +22,11 @@ export function CategoryFilter({
       data-testid="category-filter"
     >
       <Button
-        variant="outline"
+        variant={isAllSelected ? "default" : "outline"}
         size="sm"
         onClick={() => onSelect(undefined)}
         aria-pressed={isAllSelected}
-        className={cn(
-          "min-h-11 shrink-0 transition-colors",
-          isAllSelected && "bg-primary text-primary-foreground border-primary"
-        )}
+        className="min-h-11 shrink-0 transition-colors"
         data-testid="category-all"
       >
         All
@@ -41,14 +37,11 @@ export function CategoryFilter({
         return (
           <Button
             key={category.id}
-            variant="outline"
+            variant={isSelected ? "default" : "outline"}
             size="sm"
             onClick={() => onSelect(category.id)}
             aria-pressed={isSelected}
-            className={cn(
-              "min-h-11 shrink-0 gap-2 transition-colors",
-              isSelected && "bg-primary text-primary-foreground border-primary"
-            )}
+            className="min-h-11 shrink-0 gap-2 transition-colors"
             data-testid={`category-${category.id}`}
           >
             <span
