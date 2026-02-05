@@ -2,7 +2,7 @@
 
 **Status**: 🔄 In Progress
 **Started**: 2026-02-05
-**Last Updated**: 2026-02-05
+**Last Updated**: 2026-02-05 (Phase 2 Completed)
 **Estimated Completion**: -
 
 ---
@@ -550,13 +550,13 @@ pnpm exec tsc --noEmit
 ### Phase 2: 도메인 및 데이터 레이어 (Domain & Data)
 
 **Goal**: 핵심 비즈니스 로직 + Repository 패턴 구현 (프레임워크 독립적)
-**Status**: ⏳ Pending
+**Status**: ✅ Completed
 
 #### Tasks
 
 **🔴 RED: 도메인 테스트 작성**
 
-- [ ] **Test 2.1**: Todo Entity 테스트 작성
+- [x] **Test 2.1**: Todo Entity 테스트 작성
   - File: `tests/unit/domain/entities/Todo.test.ts`
   - Expected: 테스트 실패 (Entity 미존재)
   - Test Cases:
@@ -564,14 +564,14 @@ pnpm exec tsc --noEmit
     - Todo 완료 상태 토글
     - Todo 업데이트 시 유효성 검증
 
-- [ ] **Test 2.2**: Category Entity 테스트 작성
+- [x] **Test 2.2**: Category Entity 테스트 작성
   - File: `tests/unit/domain/entities/Category.test.ts`
   - Expected: 테스트 실패
   - Test Cases:
     - Category 생성 검증
     - Category 이름 중복 불가
 
-- [ ] **Test 2.3**: CreateTodo Use Case 테스트 작성
+- [x] **Test 2.3**: CreateTodo Use Case 테스트 작성
   - File: `tests/unit/domain/usecases/CreateTodo.test.ts`
   - Expected: 테스트 실패
   - Test Cases:
@@ -579,7 +579,7 @@ pnpm exec tsc --noEmit
     - 제목 없이 생성 시 실패
     - Repository 호출 검증 (Mock)
 
-- [ ] **Test 2.4**: UpdateTodo Use Case 테스트 작성
+- [x] **Test 2.4**: UpdateTodo Use Case 테스트 작성
   - File: `tests/unit/domain/usecases/UpdateTodo.test.ts`
   - Expected: 테스트 실패
   - Test Cases:
@@ -587,14 +587,14 @@ pnpm exec tsc --noEmit
     - Todo 완료 상태 토글
     - 존재하지 않는 Todo 업데이트 시 에러
 
-- [ ] **Test 2.5**: DeleteTodo Use Case 테스트 작성
+- [x] **Test 2.5**: DeleteTodo Use Case 테스트 작성
   - File: `tests/unit/domain/usecases/DeleteTodo.test.ts`
   - Expected: 테스트 실패
   - Test Cases:
     - Todo 삭제 성공
     - 존재하지 않는 Todo 삭제 시 에러
 
-- [ ] **Test 2.6**: GetTodos Use Case 테스트 작성
+- [x] **Test 2.6**: GetTodos Use Case 테스트 작성
   - File: `tests/unit/domain/usecases/GetTodos.test.ts`
   - Expected: 테스트 실패
   - Test Cases:
@@ -602,7 +602,7 @@ pnpm exec tsc --noEmit
     - 카테고리별 필터링
     - 완료 상태별 필터링
 
-- [ ] **Test 2.7**: Repository Mock 테스트 작성
+- [x] **Test 2.7**: Repository Mock 테스트 작성
   - File: `tests/unit/data/repositories/TodoRepository.test.ts`
   - Expected: 테스트 실패
   - Test Cases:
@@ -611,7 +611,7 @@ pnpm exec tsc --noEmit
 
 **🟢 GREEN: 도메인 구현**
 
-- [ ] **Task 2.8**: Todo Entity 구현
+- [x] **Task 2.8**: Todo Entity 구현
   - File: `src/domain/entities/Todo.ts`
   - Details:
     ```typescript
@@ -626,7 +626,7 @@ pnpm exec tsc --noEmit
     }
     ```
 
-- [ ] **Task 2.9**: Category Entity 구현
+- [x] **Task 2.9**: Category Entity 구현
   - File: `src/domain/entities/Category.ts`
   - Details:
     ```typescript
@@ -638,38 +638,38 @@ pnpm exec tsc --noEmit
     }
     ```
 
-- [ ] **Task 2.10**: ITodoRepository 인터페이스 정의
+- [x] **Task 2.10**: ITodoRepository 인터페이스 정의
   - File: `src/domain/repositories/ITodoRepository.ts`
   - Details: CRUD 메서드 시그니처 정의
 
-- [ ] **Task 2.11**: ICategoryRepository 인터페이스 정의
+- [x] **Task 2.11**: ICategoryRepository 인터페이스 정의
   - File: `src/domain/repositories/ICategoryRepository.ts`
 
-- [ ] **Task 2.12**: CreateTodo Use Case 구현
+- [x] **Task 2.12**: CreateTodo Use Case 구현
   - File: `src/domain/usecases/CreateTodo.ts`
   - Goal: Test 2.3 통과
 
-- [ ] **Task 2.13**: UpdateTodo Use Case 구현
+- [x] **Task 2.13**: UpdateTodo Use Case 구현
   - File: `src/domain/usecases/UpdateTodo.ts`
   - Goal: Test 2.4 통과
 
-- [ ] **Task 2.14**: DeleteTodo Use Case 구현
+- [x] **Task 2.14**: DeleteTodo Use Case 구현
   - File: `src/domain/usecases/DeleteTodo.ts`
   - Goal: Test 2.5 통과
 
-- [ ] **Task 2.15**: GetTodos Use Case 구현
+- [x] **Task 2.15**: GetTodos Use Case 구현
   - File: `src/domain/usecases/GetTodos.ts`
   - Goal: Test 2.6 통과
 
-- [ ] **Task 2.16**: SupabaseTodoRepository 구현
+- [x] **Task 2.16**: SupabaseTodoRepository 구현
   - File: `src/data/repositories/SupabaseTodoRepository.ts`
   - Goal: Test 2.7 통과
   - Details: Supabase 클라이언트를 사용한 실제 데이터 조작
 
-- [ ] **Task 2.17**: SupabaseCategoryRepository 구현
+- [x] **Task 2.17**: SupabaseCategoryRepository 구현
   - File: `src/data/repositories/SupabaseCategoryRepository.ts`
 
-- [ ] **Task 2.18**: Supabase MCP로 테이블 스키마 생성
+- [x] **Task 2.18**: Supabase MCP로 테이블 스키마 생성
   - Tool: `Supabase MCP`
   - Details:
     ```sql
@@ -700,7 +700,7 @@ pnpm exec tsc --noEmit
     CREATE POLICY "Allow all access to categories" ON categories FOR ALL USING (true);
     ```
 
-- [ ] **Task 2.19**: Supabase MCP로 테이블 생성 및 검증
+- [x] **Task 2.19**: Supabase MCP로 테이블 생성 및 검증
   - Tool: `Supabase MCP`
   - Details:
     - MCP를 통해 테이블 생성 실행
@@ -709,31 +709,31 @@ pnpm exec tsc --noEmit
 
 **🔵 REFACTOR: 도메인 코드 정리**
 
-- [ ] **Task 2.19**: 공통 타입 추출
+- [x] **Task 2.19**: 공통 타입 추출
   - File: `src/shared/types/index.ts`
   - Details: Result 타입, Error 타입 등 공통화
 
-- [ ] **Task 2.20**: 유틸리티 함수 추출
+- [x] **Task 2.20**: 유틸리티 함수 추출
   - File: `src/shared/utils/index.ts`
   - Details: ID 생성, 날짜 포맷 등
 
 #### Quality Gate ✋
 
 **TDD Compliance**:
-- [ ] 모든 테스트가 먼저 작성됨 (RED phase)
-- [ ] 테스트 통과를 위한 최소 코드만 작성 (GREEN phase)
-- [ ] 리팩터링 후에도 테스트 통과 (REFACTOR phase)
+- [x] 모든 테스트가 먼저 작성됨 (RED phase)
+- [x] 테스트 통과를 위한 최소 코드만 작성 (GREEN phase)
+- [x] 리팩터링 후에도 테스트 통과 (REFACTOR phase)
 
 **Coverage Check**:
-- [ ] Domain 레이어 커버리지 ≥80%
+- [x] Domain 레이어 커버리지 ≥80% (entities: 100%, usecases: 100%)
 
 **Build & Tests**:
-- [ ] `pnpm run test` 모든 테스트 통과
-- [ ] `pnpm run build` 성공
+- [x] `pnpm run test` 모든 테스트 통과 (54 tests)
+- [x] `pnpm run build` 성공
 
 **Code Quality**:
-- [ ] `pnpm run lint` 에러 없음
-- [ ] 타입 체크 통과
+- [x] `pnpm run lint` 에러 없음 (warnings only in coverage/)
+- [x] 타입 체크 통과
 
 **Validation Commands**:
 
@@ -1268,12 +1268,12 @@ pnpm run build -- --analyze
 ### Completion Status
 
 - **Phase 1**: ✅ 100%
-- **Phase 2**: ⏳ 0%
+- **Phase 2**: ✅ 100%
 - **Phase 3**: ⏳ 0%
 - **Phase 4**: ⏳ 0%
 - **Phase 5**: ⏳ 0%
 
-**Overall Progress**: 20%
+**Overall Progress**: 40%
 
 ### Time Tracking
 
