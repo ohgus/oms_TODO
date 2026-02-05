@@ -445,7 +445,7 @@ tests/
 **🟢 GREEN: 프로젝트 초기화 및 설정**
 
 - [ ] **Task 1.2**: Vite + React + TypeScript 프로젝트 초기화
-  - Command: `npm create vite@latest . -- --template react-ts`
+  - Command: `pnpm create vite@latest . -- --template react-ts`
   - Details: 기본 Vite 템플릿 생성
 
 - [ ] **Task 1.3**: 클린 아키텍처 디렉터리 구조 생성
@@ -454,10 +454,10 @@ tests/
 
 - [ ] **Task 1.4**: TailwindCSS 설정
   - Files: `tailwind.config.js`, `postcss.config.js`, `src/index.css`
-  - Command: `npm install -D tailwindcss postcss autoprefixer && npx tailwindcss init -p`
+  - Command: `pnpm add -D tailwindcss postcss autoprefixer && pnpm exec tailwindcss init -p`
 
 - [ ] **Task 1.5**: shadcn/ui 초기화
-  - Command: `npx shadcn-ui@latest init`
+  - Command: `pnpm dlx shadcn-ui@latest init`
   - Files: `components.json`, `src/presentation/components/ui/`
   - Details: 기본 테마 및 컴포넌트 경로 설정
 
@@ -467,10 +467,10 @@ tests/
 
 - [ ] **Task 1.7**: Vitest 설정
   - Files: `vitest.config.ts`, `tests/setup.ts`
-  - Command: `npm install -D vitest @testing-library/react @testing-library/jest-dom jsdom`
+  - Command: `pnpm add -D vitest @testing-library/react @testing-library/jest-dom jsdom`
 
 - [ ] **Task 1.8**: Storybook 설정 (모바일 뷰포트 기본)
-  - Command: `npx storybook@latest init`
+  - Command: `pnpm dlx storybook@latest init`
   - Files: `.storybook/main.ts`, `.storybook/preview.ts`
   - Details:
     - 기본 뷰포트를 **375px (모바일)**로 설정
@@ -478,7 +478,7 @@ tests/
     - 모든 스토리가 모바일 뷰에서 먼저 렌더링되도록 구성
 
 - [ ] **Task 1.9**: Playwright 설정 (모바일 우선 테스트)
-  - Command: `npm init playwright@latest`
+  - Command: `pnpm create playwright`
   - Files: `playwright.config.ts`, `tests/e2e/`
   - Details:
     - 기본 프로젝트를 **Mobile Chrome (iPhone 12)**으로 설정
@@ -487,7 +487,7 @@ tests/
 
 - [ ] **Task 1.10**: Supabase 클라이언트 설정
   - Files: `src/infrastructure/supabase/client.ts`, `.env.local`
-  - Command: `npm install @supabase/supabase-js`
+  - Command: `pnpm add @supabase/supabase-js`
   - Details: 환경 변수로 API URL/Key 관리
 
 - [ ] **Task 1.11**: Path alias 설정
@@ -505,18 +505,18 @@ tests/
 **⚠️ STOP: Phase 2로 진행하기 전 모든 항목 통과 필수**
 
 **Build & Configuration**:
-- [ ] `npm run build` 성공
-- [ ] `npm run dev` 로 개발 서버 정상 실행
+- [ ] `pnpm run build` 성공
+- [ ] `pnpm run dev` 로 개발 서버 정상 실행
 - [ ] TypeScript 컴파일 에러 없음
 
 **Testing Setup**:
-- [ ] `npm run test` 실행 성공
-- [ ] Storybook `npm run storybook` 실행 성공
-- [ ] Playwright `npx playwright test --ui` 실행 성공
+- [ ] `pnpm run test` 실행 성공
+- [ ] Storybook `pnpm run storybook` 실행 성공
+- [ ] Playwright `pnpm exec playwright test --ui` 실행 성공
 
 **Code Quality**:
-- [ ] `npm run lint` 에러 없음
-- [ ] `npm run format:check` 통과
+- [ ] `pnpm run lint` 에러 없음
+- [ ] `pnpm run format:check` 통과
 
 **Infrastructure**:
 - [ ] Supabase 연결 테스트 성공
@@ -526,23 +526,23 @@ tests/
 
 ```bash
 # Build
-npm run build
+pnpm run build
 
 # Tests
-npm run test
+pnpm run test
 
 # Storybook
-npm run storybook
+pnpm run storybook
 
 # Playwright (UI mode)
-npx playwright test --ui
+pnpm exec playwright test --ui
 
 # Lint & Format
-npm run lint
-npm run format:check
+pnpm run lint
+pnpm run format:check
 
 # Type Check
-npx tsc --noEmit
+pnpm exec tsc --noEmit
 ```
 
 ---
@@ -728,24 +728,24 @@ npx tsc --noEmit
 - [ ] Domain 레이어 커버리지 ≥80%
 
 **Build & Tests**:
-- [ ] `npm run test` 모든 테스트 통과
-- [ ] `npm run build` 성공
+- [ ] `pnpm run test` 모든 테스트 통과
+- [ ] `pnpm run build` 성공
 
 **Code Quality**:
-- [ ] `npm run lint` 에러 없음
+- [ ] `pnpm run lint` 에러 없음
 - [ ] 타입 체크 통과
 
 **Validation Commands**:
 
 ```bash
 # Unit Tests with Coverage
-npm run test -- --coverage
+pnpm run test -- --coverage
 
 # Type Check
-npx tsc --noEmit
+pnpm exec tsc --noEmit
 
 # Lint
-npm run lint
+pnpm run lint
 ```
 
 **Manual Test Checklist**:
@@ -798,7 +798,7 @@ npm run lint
 **🟢 GREEN: 컴포넌트 구현**
 
 - [ ] **Task 3.5**: shadcn/ui 기본 컴포넌트 설치
-  - Command: `npx shadcn-ui@latest add button input checkbox card badge`
+  - Command: `pnpm dlx shadcn-ui@latest add button input checkbox card badge`
   - Files: `src/presentation/components/ui/`
 
 - [ ] **Task 3.6**: TodoItem 컴포넌트 구현
@@ -878,16 +878,16 @@ npm run lint
 - [ ] Presentation 레이어 커버리지 ≥70%
 
 **Build & Tests**:
-- [ ] `npm run test` 모든 테스트 통과
-- [ ] `npm run build` 성공
+- [ ] `pnpm run test` 모든 테스트 통과
+- [ ] `pnpm run build` 성공
 
 **Storybook**:
 - [ ] 모든 컴포넌트 스토리 작성 완료
-- [ ] `npm run storybook` 정상 실행
+- [ ] `pnpm run storybook` 정상 실행
 - [ ] 모든 variants 시각적 검증
 
 **Code Quality**:
-- [ ] `npm run lint` 에러 없음
+- [ ] `pnpm run lint` 에러 없음
 - [ ] 접근성(a11y) 기본 검증
 
 **🔍 Code Review (REQUIRED)**:
@@ -900,16 +900,16 @@ npm run lint
 
 ```bash
 # Component Tests
-npm run test -- --coverage
+pnpm run test -- --coverage
 
 # Storybook
-npm run storybook
+pnpm run storybook
 
 # Build Storybook
-npm run build-storybook
+pnpm run build-storybook
 
 # Lint
-npm run lint
+pnpm run lint
 
 # Code Review (Claude Code)
 /frontend-code-review src/presentation/components/
@@ -1011,11 +1011,11 @@ npm run lint
 - [ ] 전체 커버리지 ≥75%
 
 **Build & Tests**:
-- [ ] `npm run test` 모든 테스트 통과
-- [ ] `npm run build` 성공
+- [ ] `pnpm run test` 모든 테스트 통과
+- [ ] `pnpm run build` 성공
 
 **Code Quality**:
-- [ ] `npm run lint` 에러 없음
+- [ ] `pnpm run lint` 에러 없음
 - [ ] 타입 체크 통과
 
 **Functional**:
@@ -1035,16 +1035,16 @@ npm run lint
 
 ```bash
 # All Tests
-npm run test -- --coverage
+pnpm run test -- --coverage
 
 # Build
-npm run build
+pnpm run build
 
 # Preview
-npm run preview
+pnpm run preview
 
 # Type Check
-npx tsc --noEmit
+pnpm exec tsc --noEmit
 
 # Code Review (Claude Code)
 /frontend-code-review src/presentation/hooks/
@@ -1166,7 +1166,7 @@ npx tsc --noEmit
 #### Quality Gate ✋
 
 **E2E Tests**:
-- [ ] `npx playwright test` 모든 테스트 통과
+- [ ] `pnpm exec playwright test` 모든 테스트 통과
 - [ ] 크로스 브라우저 테스트 통과 (Chrome, Firefox, Safari)
 
 **Performance**:
@@ -1175,7 +1175,7 @@ npx tsc --noEmit
 - [ ] First Contentful Paint <1.5s
 
 **Build & Deploy Ready**:
-- [ ] `npm run build` 성공
+- [ ] `pnpm run build` 성공
 - [ ] 빌드 결과물 크기 적정 (<500KB gzipped)
 - [ ] 환경 변수 문서화
 
@@ -1197,20 +1197,20 @@ npx tsc --noEmit
 
 ```bash
 # E2E Tests
-npx playwright test
+pnpm exec playwright test
 
 # E2E with UI (Playwright MCP)
 mcp_playwright: test --ui
 
 # Show Report
-npx playwright show-report
+pnpm exec playwright show-report
 
 # Lighthouse (requires build)
-npm run build && npm run preview
+pnpm run build && pnpm run preview
 # Then run Lighthouse in Chrome DevTools
 
 # Bundle Analysis
-npm run build -- --analyze
+pnpm run build -- --analyze
 
 # Final Code Review (Claude Code)
 /frontend-code-review src/presentation/
