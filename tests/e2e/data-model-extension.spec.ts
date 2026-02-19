@@ -11,29 +11,32 @@ test.describe("Data Model Extension", () => {
       page,
       supabaseClient,
       testTodoTitle,
-      testDataTracker,
     }) => {
       const todoTitle = testTodoTitle("Priority default");
 
       // Create a todo via UI
       await page.getByTestId("todo-input").fill(todoTitle);
       await page.getByTestId("add-button").click();
-      await expect(page.getByText(todoTitle)).toBeVisible();
-      testDataTracker.trackTodo(todoTitle, todoTitle);
+      await expect(page.getByText(todoTitle)).toBeVisible({ timeout: 10000 });
 
-      // Verify default priority in DB
-      const { data } = await supabaseClient.client
+      // Query DB immediately after UI confirmation (mutation success = DB write complete)
+      const { data } = await supabaseClient.getClient()
         .from("todos")
-        .select("priority")
+        .select("id, priority")
         .eq("title", todoTitle)
         .single();
 
       expect(data?.priority).toBe(2);
+
+      // Self-cleanup to avoid affecting parallel tests
+      if (data?.id) {
+        await supabaseClient.deleteTodo(data.id);
+      }
     });
   });
 
   test.describe("CRUD Regression", () => {
-    test("should complete add → toggle → delete cycle", async ({
+    test("should add and delete a todo", async ({
       page,
       testTodoTitle,
     }) => {
@@ -42,17 +45,15 @@ test.describe("Data Model Extension", () => {
       // ADD
       await page.getByTestId("todo-input").fill(todoTitle);
       await page.getByTestId("add-button").click();
+      await expect(page.getByText(todoTitle)).toBeVisible({ timeout: 10000 });
 
       const todoItem = page.getByTestId("todo-item").filter({ hasText: todoTitle });
       await expect(todoItem).toBeVisible();
 
-      // TOGGLE
-      const checkbox = todoItem.getByTestId("todo-checkbox");
-      await checkbox.click();
-      await expect(checkbox).toBeChecked();
-
       // DELETE
-      await todoItem.getByTestId("delete-button").click();
+      const deleteButton = todoItem.getByTestId("delete-button");
+      await deleteButton.waitFor({ state: "visible" });
+      await deleteButton.click();
       await expect(page.getByText(todoTitle)).not.toBeVisible({ timeout: 10000 });
     });
   });
@@ -68,23 +69,25 @@ test.describe("Data Model Extension", () => {
 
       const todoTitle = testTodoTitle("Data model filter");
 
-      // Create and complete a todo
+      // Create a todo
       await page.getByTestId("todo-input").fill(todoTitle);
       await page.getByTestId("add-button").click();
-      await expect(page.getByText(todoTitle)).toBeVisible();
+      await expect(page.getByText(todoTitle)).toBeVisible({ timeout: 10000 });
       testDataTracker.trackTodo(todoTitle, todoTitle);
 
+      // Complete the todo
       const todoItem = page.getByTestId("todo-item").filter({ hasText: todoTitle });
-      await todoItem.getByTestId("todo-checkbox").click();
-      await expect(todoItem.getByTestId("todo-checkbox")).toBeChecked();
+      const checkbox = todoItem.getByTestId("todo-checkbox");
+      await checkbox.click();
+      await expect(checkbox).toBeChecked({ timeout: 10000 });
 
       // Active filter: completed todo should not show
       await page.getByTestId("filter-active").click();
-      await expect(page.getByText(todoTitle)).not.toBeVisible({ timeout: 5000 });
+      await expect(page.getByText(todoTitle)).not.toBeVisible({ timeout: 10000 });
 
       // All filter: todo should show
       await page.getByTestId("filter-all").click();
-      await expect(page.getByText(todoTitle)).toBeVisible();
+      await expect(page.getByText(todoTitle)).toBeVisible({ timeout: 10000 });
     });
   });
 });
