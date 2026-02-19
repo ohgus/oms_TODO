@@ -121,7 +121,7 @@ describe("createTodo", () => {
 
 **Goal**: Outfit 폰트 + HEX 기반 CSS 변수 + Tailwind 테마 확장 + 기존 컴포넌트 마이그레이션
 **Estimated Time**: 3 hours
-**Status**: 🔄 In Progress
+**Status**: ✅ Complete
 
 #### Tasks
 
@@ -301,20 +301,18 @@ pnpm run lint
 
 **Quality Gate 통과 후 커밋을 진행한다.**
 
-- [ ] **Commit 1.A**: Outfit 폰트 + CSS 변수 교체
-  - 대상: `index.html`, `src/index.css`
+- [x] **Commit 1.A**: Outfit 폰트 + CSS 변수 교체 + E2E 테스트
+  - 대상: `index.html`, `src/index.css`, `tests/e2e/design-tokens.spec.ts`
   - 메시지: `feat: Outfit 폰트 적용 및 HEX 기반 디자인 토큰 CSS 변수 교체`
 
-- [ ] **Commit 1.B**: Tailwind 테마 확장
+- [x] **Commit 1.B**: Tailwind 테마 확장
   - 대상: `tailwind.config.js`
   - 메시지: `feat: Tailwind 테마에 디자인 토큰 확장 (bg/txt/accent/star/border)`
 
-- [ ] **Commit 1.C**: shadcn/ui 컴포넌트 hsl() 제거 + 토큰 마이그레이션
-  - 대상: `src/presentation/components/ui/button.tsx`, `input.tsx`, `badge.tsx`, `checkbox.tsx`, `card.tsx`
-  - 메시지: `refactor: shadcn/ui 컴포넌트에서 hsl() 래퍼 제거 및 새 토큰 적용`
+- ~~**Commit 1.C**~~: SKIP — shadcn/ui 컴포넌트 파일 변경 없음 (hsl() 제거는 Tailwind config 레벨에서 처리됨)
 
-- [ ] **Commit 1.D**: 기존 컴포넌트 토큰 마이그레이션
-  - 대상: `HomePage.tsx`, `TodoItem.tsx`, `TodoList.tsx`, `StatusFilter.tsx`, `CategoryFilter.tsx`
+- [x] **Commit 1.D**: 기존 컴포넌트 토큰 마이그레이션
+  - 대상: `HomePage.tsx`, `TodoItem.tsx`, `TodoList.tsx`, `StatusFilter.tsx` + E2E 스크린샷
   - 메시지: `refactor: 기존 컴포넌트 색상/폰트 클래스를 새 디자인 토큰으로 마이그레이션`
 
 > **참고**: 커밋 단위는 상황에 따라 합치거나 더 분리해도 된다. 핵심은 각 커밋이 빌드 가능한 상태를 유지하는 것.
