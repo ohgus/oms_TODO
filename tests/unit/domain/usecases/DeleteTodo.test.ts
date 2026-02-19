@@ -22,6 +22,7 @@ describe("DeleteTodo Use Case", () => {
       id: "todo-1",
       title: "Test Todo",
       completed: false,
+      priority: 2,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

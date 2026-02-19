@@ -25,6 +25,8 @@ export class CreateTodoUseCase {
       description: todo.description,
       categoryId: todo.categoryId,
       completed: todo.completed,
+      priority: todo.priority,
+      dueDate: todo.dueDate,
     });
   }
 }

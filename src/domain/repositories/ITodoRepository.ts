@@ -3,6 +3,8 @@ import type { Todo } from "@domain/entities/Todo";
 export interface TodoFilter {
   completed?: boolean;
   categoryId?: string;
+  dueDate?: Date;
+  dueDateRange?: { from: Date; to: Date };
 }
 
 export interface ITodoRepository {

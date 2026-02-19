@@ -8,6 +8,7 @@ const createMockTodo = (overrides: Partial<Todo> = {}): Todo => ({
   id: `test-id-${Math.random()}`,
   title: "Test Todo",
   completed: false,
+  priority: 2,
   createdAt: new Date("2026-01-01"),
   updatedAt: new Date("2026-01-01"),
   ...overrides,

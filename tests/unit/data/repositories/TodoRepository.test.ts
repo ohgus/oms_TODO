@@ -75,6 +75,7 @@ describe("SupabaseTodoRepository", () => {
         description: "Description",
         categoryId: "category-1",
         completed: false,
+        priority: 2,
       };
 
       const dbResponse = {
@@ -83,6 +84,8 @@ describe("SupabaseTodoRepository", () => {
         description: "Description",
         category_id: "category-1",
         completed: false,
+        priority: 2,
+        due_date: null,
         created_at: "2024-01-01T00:00:00Z",
         updated_at: "2024-01-01T00:00:00Z",
       };
@@ -107,6 +110,7 @@ describe("SupabaseTodoRepository", () => {
       const todoInput: Omit<Todo, "id" | "createdAt" | "updatedAt"> = {
         title: "New Todo",
         completed: false,
+        priority: 2,
       };
 
       mockClient.mockFrom.mockReturnValue({
@@ -249,6 +253,56 @@ describe("SupabaseTodoRepository", () => {
       expect(result).toHaveLength(1);
       expect(result[0].categoryId).toBe("category-1");
     });
+
+    it("should map priority and due_date from row to todo", async () => {
+      const dbResponse = [
+        {
+          id: "todo-1",
+          title: "Todo 1",
+          description: null,
+          category_id: null,
+          completed: false,
+          priority: 3,
+          due_date: "2026-03-15",
+          created_at: "2024-01-01T00:00:00Z",
+          updated_at: "2024-01-01T00:00:00Z",
+        },
+      ];
+
+      mockClient.mockFrom.mockReturnValue({
+        select: vi.fn().mockResolvedValue({ data: dbResponse, error: null }),
+      });
+
+      const result = await repository.findAll();
+
+      expect(result[0].priority).toBe(3);
+      expect(result[0].dueDate).toEqual(new Date("2026-03-15"));
+    });
+
+    it("should map null due_date to undefined", async () => {
+      const dbResponse = [
+        {
+          id: "todo-1",
+          title: "Todo 1",
+          description: null,
+          category_id: null,
+          completed: false,
+          priority: 2,
+          due_date: null,
+          created_at: "2024-01-01T00:00:00Z",
+          updated_at: "2024-01-01T00:00:00Z",
+        },
+      ];
+
+      mockClient.mockFrom.mockReturnValue({
+        select: vi.fn().mockResolvedValue({ data: dbResponse, error: null }),
+      });
+
+      const result = await repository.findAll();
+
+      expect(result[0].priority).toBe(2);
+      expect(result[0].dueDate).toBeUndefined();
+    });
   });
 
   describe("update", () => {
@@ -259,6 +313,7 @@ describe("SupabaseTodoRepository", () => {
         description: "Updated Description",
         categoryId: "category-1",
         completed: true,
+        priority: 2,
         createdAt: new Date("2024-01-01"),
         updatedAt: new Date(),
       };
@@ -269,6 +324,8 @@ describe("SupabaseTodoRepository", () => {
         description: "Updated Description",
         category_id: "category-1",
         completed: true,
+        priority: 2,
+        due_date: null,
         created_at: "2024-01-01T00:00:00Z",
         updated_at: "2024-01-02T00:00:00Z",
       };
@@ -295,6 +352,7 @@ describe("SupabaseTodoRepository", () => {
         id: "todo-1",
         title: "Updated Title",
         completed: false,
+        priority: 2,
         createdAt: new Date(),
         updatedAt: new Date(),
       };

@@ -40,6 +40,37 @@ describe("Todo Entity", () => {
 
       expect(todo1.id).not.toBe(todo2.id);
     });
+
+    it("should default priority to 2 when not specified", () => {
+      const todo = createTodo({ title: "Test Todo" });
+
+      expect(todo.priority).toBe(2);
+    });
+
+    it("should set priority when specified", () => {
+      const todo = createTodo({ title: "Test Todo", priority: 3 });
+
+      expect(todo.priority).toBe(3);
+    });
+
+    it("should set priority to 1 when specified", () => {
+      const todo = createTodo({ title: "Test Todo", priority: 1 });
+
+      expect(todo.priority).toBe(1);
+    });
+
+    it("should set dueDate when specified", () => {
+      const dueDate = new Date("2026-03-15");
+      const todo = createTodo({ title: "Test Todo", dueDate });
+
+      expect(todo.dueDate).toEqual(dueDate);
+    });
+
+    it("should leave dueDate undefined when not specified", () => {
+      const todo = createTodo({ title: "Test Todo" });
+
+      expect(todo.dueDate).toBeUndefined();
+    });
   });
 
   describe("toggleTodoComplete", () => {
@@ -89,6 +120,28 @@ describe("Todo Entity", () => {
       const updated = updateTodo(todo, { categoryId: "new-category" });
 
       expect(updated.categoryId).toBe("new-category");
+    });
+
+    it("should update todo priority", () => {
+      const todo = createTodo({ title: "Test Todo" });
+      const updated = updateTodo(todo, { priority: 3 });
+
+      expect(updated.priority).toBe(3);
+    });
+
+    it("should update todo dueDate", () => {
+      const todo = createTodo({ title: "Test Todo" });
+      const dueDate = new Date("2026-04-01");
+      const updated = updateTodo(todo, { dueDate });
+
+      expect(updated.dueDate).toEqual(dueDate);
+    });
+
+    it("should remove dueDate when set to null", () => {
+      const todo = createTodo({ title: "Test Todo", dueDate: new Date("2026-03-15") });
+      const updated = updateTodo(todo, { dueDate: null });
+
+      expect(updated.dueDate).toBeUndefined();
     });
 
     it("should throw error when updating with empty title", () => {

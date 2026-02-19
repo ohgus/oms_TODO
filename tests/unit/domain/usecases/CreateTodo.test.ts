@@ -31,6 +31,7 @@ describe("CreateTodo Use Case", () => {
       description: "Description",
       categoryId: "category-1",
       completed: false,
+      priority: 2,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -60,6 +61,7 @@ describe("CreateTodo Use Case", () => {
       id: "todo-2",
       title: "Simple Todo",
       completed: false,
+      priority: 2,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

@@ -36,6 +36,7 @@ const baseTodo = {
   id: "1",
   title: "Buy groceries",
   completed: false,
+  priority: 2 as const,
   createdAt: new Date("2026-01-01"),
   updatedAt: new Date("2026-01-01"),
 };

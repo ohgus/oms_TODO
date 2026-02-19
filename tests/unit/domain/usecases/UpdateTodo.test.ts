@@ -24,6 +24,7 @@ describe("UpdateTodo Use Case", () => {
       description: "Original Description",
       categoryId: "category-1",
       completed: false,
+      priority: 2,
       createdAt: new Date("2024-01-01"),
       updatedAt: new Date("2024-01-01"),
     };

@@ -8,6 +8,8 @@ const TODOS_QUERY_KEY = "todos";
 interface UseTodosOptions {
   completed?: boolean;
   categoryId?: string;
+  dueDate?: Date;
+  dueDateRange?: { from: Date; to: Date };
 }
 
 interface UseTodosReturn {
@@ -25,13 +27,20 @@ interface UseTodosReturn {
 export function useTodos(repository: ITodoRepository, options?: UseTodosOptions): UseTodosReturn {
   const queryClient = useQueryClient();
 
-  const filter: TodoFilter | undefined =
-    options?.completed !== undefined || options?.categoryId !== undefined
-      ? {
-          completed: options?.completed,
-          categoryId: options?.categoryId,
-        }
-      : undefined;
+  const hasFilter =
+    options?.completed !== undefined ||
+    options?.categoryId !== undefined ||
+    options?.dueDate !== undefined ||
+    options?.dueDateRange !== undefined;
+
+  const filter: TodoFilter | undefined = hasFilter
+    ? {
+        completed: options?.completed,
+        categoryId: options?.categoryId,
+        dueDate: options?.dueDate,
+        dueDateRange: options?.dueDateRange,
+      }
+    : undefined;
 
   const queryKey = [TODOS_QUERY_KEY, filter];
 
@@ -56,6 +65,8 @@ export function useTodos(repository: ITodoRepository, options?: UseTodosOptions)
         description: todoData.description,
         categoryId: todoData.categoryId,
         completed: todoData.completed,
+        priority: todoData.priority,
+        dueDate: todoData.dueDate,
       });
     },
     onSuccess: () => {
@@ -76,6 +87,8 @@ export function useTodos(repository: ITodoRepository, options?: UseTodosOptions)
         description: input.description,
         categoryId: input.categoryId,
         completed: input.completed,
+        priority: input.priority,
+        dueDate: input.dueDate,
       });
 
       return repository.update(updatedTodo);
