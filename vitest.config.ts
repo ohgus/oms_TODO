@@ -29,6 +29,7 @@ export default defineConfig({
           name: "unit",
           include: ["tests/**/*.{test,spec}.{ts,tsx}"],
           exclude: ["tests/e2e/**/*"],
+          setupFiles: ["./tests/setup.ts", "./tests/setup-vaul-mock.ts"],
         },
       },
       {

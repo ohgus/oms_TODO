@@ -1,14 +1,15 @@
-import { CheckSquare } from "lucide-react";
+import { CheckSquare, Plus } from "lucide-react";
 import type { Todo } from "@domain/entities/Todo";
 import type { DIContainer } from "@infrastructure/di/container";
 import { useTodos } from "@presentation/hooks/useTodos";
 import { useCategories } from "@presentation/hooks/useCategories";
 import { useTodosRealtime } from "@presentation/hooks/useTodosRealtime";
 import { useUIStore, type StatusFilter as StatusFilterType } from "@presentation/stores/uiStore";
-import { TodoForm, type TodoFormData } from "@presentation/components/todo/TodoForm";
+import { TodoAddModal, type TodoAddFormData } from "@presentation/components/todo/TodoAddModal";
 import { TodoList } from "@presentation/components/todo/TodoList";
 import { StatusFilter } from "@presentation/components/todo/StatusFilter";
 import { CategoryFilter } from "@presentation/components/category/CategoryFilter";
+import { Button } from "@presentation/components/ui/button";
 
 export interface HomePageProps {
   container: DIContainer;
@@ -40,7 +41,15 @@ export function HomePage({ container }: HomePageProps) {
   // Enable realtime synchronization
   useTodosRealtime();
 
-  const { statusFilter, categoryFilter, setStatusFilter, setCategoryFilter } = useUIStore();
+  const {
+    statusFilter,
+    categoryFilter,
+    isAddTodoModalOpen,
+    setStatusFilter,
+    setCategoryFilter,
+    openAddTodoModal,
+    closeAddTodoModal,
+  } = useUIStore();
 
   const todoFilterOptions = buildFilterOptions(statusFilter, categoryFilter);
 
@@ -62,32 +71,19 @@ export function HomePage({ container }: HomePageProps) {
   const isLoading = isTodosLoading || isCategoriesLoading;
   const isError = isTodosError || isCategoriesError;
 
-  const handleAddTodo = async (data: TodoFormData) => {
+  const handleAddTodo = async (data: TodoAddFormData) => {
     if (!data.title.trim()) return;
     await addTodo({
       title: data.title,
       categoryId: data.categoryId,
+      priority: data.priority,
+      dueDate: data.dueDate,
     });
-  };
-
-  const handleToggleComplete = async (id: string) => {
-    await toggleTodo(id);
-  };
-
-  const handleDelete = async (id: string) => {
-    await deleteTodo(id);
+    closeAddTodoModal();
   };
 
   const handleEdit = (_todo: Todo) => {
-    // TODO: Implement edit functionality in a future phase
-  };
-
-  const handleStatusFilterChange = (status: StatusFilterType) => {
-    setStatusFilter(status);
-  };
-
-  const handleCategoryFilterChange = (categoryId: string | undefined) => {
-    setCategoryFilter(categoryId ?? null);
+    // TODO: Implement edit functionality in Phase 4
   };
 
   if (isError) {
@@ -104,24 +100,30 @@ export function HomePage({ container }: HomePageProps) {
     <div className="min-h-screen bg-bg-primary" data-testid="home-page">
       <div className="max-w-2xl mx-auto px-4 py-6 sm:py-8">
         {/* Header */}
-        <header className="flex items-center gap-3 mb-6">
-          <CheckSquare className="h-8 w-8 text-accent-primary" />
-          <h1 className="text-2xl font-bold text-txt-primary">TODO</h1>
+        <header className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <CheckSquare className="h-8 w-8 text-accent-primary" />
+            <h1 className="text-2xl font-bold text-txt-primary">TODO</h1>
+          </div>
+          <Button
+            onClick={openAddTodoModal}
+            size="icon"
+            className="min-h-11 min-w-11 bg-accent-primary text-white hover:bg-accent-primary/90"
+            aria-label="Add todo"
+            data-testid="add-todo-button"
+          >
+            <Plus className="h-5 w-5" />
+          </Button>
         </header>
-
-        {/* Add Todo Form */}
-        <section className="mb-6" aria-label="Add todo">
-          <TodoForm onSubmit={handleAddTodo} categories={categories} />
-        </section>
 
         {/* Filters */}
         <section className="space-y-3 mb-6" aria-label="Filters">
-          <StatusFilter selectedStatus={statusFilter} onSelect={handleStatusFilterChange} />
+          <StatusFilter selectedStatus={statusFilter} onSelect={setStatusFilter} />
           {categories.length > 0 && (
             <CategoryFilter
               categories={categories}
               selectedCategoryId={categoryFilter ?? undefined}
-              onSelect={handleCategoryFilterChange}
+              onSelect={(id) => setCategoryFilter(id ?? null)}
             />
           )}
         </section>
@@ -136,13 +138,23 @@ export function HomePage({ container }: HomePageProps) {
             <TodoList
               todos={todos}
               categories={categories}
-              onToggleComplete={handleToggleComplete}
-              onDelete={handleDelete}
+              onToggleComplete={toggleTodo}
+              onDelete={deleteTodo}
               onEdit={handleEdit}
               emptyMessage={EMPTY_MESSAGES[statusFilter]}
             />
           )}
         </section>
+
+        {/* Add Todo Modal */}
+        <TodoAddModal
+          open={isAddTodoModalOpen}
+          onOpenChange={(open) => {
+            if (!open) closeAddTodoModal();
+          }}
+          onSubmit={handleAddTodo}
+          categories={categories}
+        />
       </div>
     </div>
   );

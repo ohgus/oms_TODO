@@ -147,6 +147,14 @@ describe("HomePage", () => {
       expect(screen.getByText("Call mom")).toBeInTheDocument();
     });
 
+    it("헤더에 (+) 추가 버튼이 표시되어야 한다", async () => {
+      render(<HomePage container={container} />, {
+        wrapper: createWrapper(),
+      });
+
+      expect(screen.getByTestId("add-todo-button")).toBeInTheDocument();
+    });
+
     it("카테고리 필터가 표시되어야 한다", async () => {
       render(<HomePage container={container} />, {
         wrapper: createWrapper(),
@@ -179,8 +187,8 @@ describe("HomePage", () => {
     });
   });
 
-  describe("새 Todo 추가", () => {
-    it("입력창에 텍스트를 입력하고 추가할 수 있어야 한다", async () => {
+  describe("새 Todo 추가 (모달)", () => {
+    it("(+) 버튼 클릭 시 모달이 열려야 한다", async () => {
       render(<HomePage container={container} />, {
         wrapper: createWrapper(),
       });
@@ -189,18 +197,36 @@ describe("HomePage", () => {
         expect(screen.queryByText(/loading/i)).not.toBeInTheDocument();
       });
 
-      const input = screen.getByPlaceholderText(/add a new todo/i);
+      await user.click(screen.getByTestId("add-todo-button"));
+
+      expect(screen.getByText("TODO 추가")).toBeInTheDocument();
+    });
+
+    it("모달에서 제목 입력 후 추가하기 클릭으로 Todo를 추가할 수 있어야 한다", async () => {
+      render(<HomePage container={container} />, {
+        wrapper: createWrapper(),
+      });
+
+      await waitFor(() => {
+        expect(screen.queryByText(/loading/i)).not.toBeInTheDocument();
+      });
+
+      // Open modal
+      await user.click(screen.getByTestId("add-todo-button"));
+
+      // Type title
+      const input = screen.getByPlaceholderText(/할 일/i);
       await user.type(input, "New task");
 
-      const addButton = screen.getByRole("button", { name: /add/i });
-      await user.click(addButton);
+      // Submit
+      await user.click(screen.getByRole("button", { name: /추가하기/ }));
 
       expect(mockTodoRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({ title: "New task" })
       );
     });
 
-    it("빈 입력으로는 Todo를 추가할 수 없어야 한다", async () => {
+    it("빈 제목으로는 Todo를 추가할 수 없어야 한다", async () => {
       render(<HomePage container={container} />, {
         wrapper: createWrapper(),
       });
@@ -209,34 +235,11 @@ describe("HomePage", () => {
         expect(screen.queryByText(/loading/i)).not.toBeInTheDocument();
       });
 
-      const addButton = screen.getByRole("button", { name: /add/i });
-      await user.click(addButton);
+      // Open modal
+      await user.click(screen.getByTestId("add-todo-button"));
 
-      expect(mockTodoRepository.create).not.toHaveBeenCalled();
-    });
-
-    it("카테고리를 선택하여 Todo를 추가할 수 있어야 한다", async () => {
-      render(<HomePage container={container} />, {
-        wrapper: createWrapper(),
-      });
-
-      await waitFor(() => {
-        expect(screen.queryByText(/loading/i)).not.toBeInTheDocument();
-      });
-
-      const input = screen.getByPlaceholderText(/add a new todo/i);
-      await user.type(input, "Work task");
-
-      // select element with aria-label="Category" (exact match)
-      const categorySelect = screen.getByLabelText("Category");
-      await user.selectOptions(categorySelect, "cat-2");
-
-      const addButton = screen.getByRole("button", { name: /add/i });
-      await user.click(addButton);
-
-      expect(mockTodoRepository.create).toHaveBeenCalledWith(
-        expect.objectContaining({ title: "Work task", categoryId: "cat-2" })
-      );
+      // Submit button should be disabled
+      expect(screen.getByRole("button", { name: /추가하기/ })).toBeDisabled();
     });
   });
 
