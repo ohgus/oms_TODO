@@ -18,12 +18,12 @@ function LoadingSkeleton() {
       {[1, 2, 3].map((i) => (
         <div
           key={i}
-          className="flex items-center gap-3 p-3 bg-card rounded-lg border animate-pulse"
+          className="flex items-center gap-3 p-3 bg-bg-surface rounded-lg border animate-pulse"
         >
-          <div className="h-5 w-5 bg-muted rounded" />
+          <div className="h-5 w-5 bg-bg-muted rounded" />
           <div className="flex-1 space-y-2">
-            <div className="h-4 bg-muted rounded w-3/4" />
-            <div className="h-3 bg-muted rounded w-1/2" />
+            <div className="h-4 bg-bg-muted rounded w-3/4" />
+            <div className="h-3 bg-bg-muted rounded w-1/2" />
           </div>
         </div>
       ))}
@@ -47,7 +47,7 @@ export function TodoList({
   if (todos.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center" data-testid="empty-message">
-        <p className="text-muted-foreground">{emptyMessage}</p>
+        <p className="text-txt-secondary">{emptyMessage}</p>
       </div>
     );
   }

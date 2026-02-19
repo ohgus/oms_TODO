@@ -18,7 +18,7 @@ export function StatusFilter({ selectedStatus, onSelect }: StatusFilterProps) {
     <div
       role="group"
       aria-label="Status filter"
-      className="flex gap-1 p-1 bg-muted rounded-lg"
+      className="flex gap-1 p-1 bg-bg-muted rounded-lg"
       data-testid="status-filter"
     >
       {statuses.map(({ value, label }) => (

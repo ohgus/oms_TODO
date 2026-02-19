@@ -23,7 +23,7 @@ export function TodoItem({
   categoryColor,
 }: TodoItemProps) {
   return (
-    <div className="flex flex-col gap-2 p-3 bg-card rounded-lg border sm:flex-row sm:items-center sm:gap-4" data-testid="todo-item">
+    <div className="flex flex-col gap-2 p-3 bg-bg-surface rounded-lg border sm:flex-row sm:items-center sm:gap-4" data-testid="todo-item">
       <div className="flex items-center gap-3 flex-1 min-w-0">
         <div data-testid="checkbox-wrapper" className="flex items-center justify-center min-h-11 min-w-11">
           <Checkbox
@@ -38,14 +38,14 @@ export function TodoItem({
           <p
             className={cn(
               "text-sm font-medium truncate",
-              todo.completed && "line-through text-muted-foreground"
+              todo.completed && "line-through text-txt-secondary"
             )}
             data-testid="todo-title"
           >
             {todo.title}
           </p>
           {todo.description && (
-            <p className="text-xs text-muted-foreground truncate mt-0.5">
+            <p className="text-xs text-txt-secondary truncate mt-0.5">
               {todo.description}
             </p>
           )}
@@ -82,7 +82,7 @@ export function TodoItem({
           <Button
             variant="ghost"
             size="icon"
-            className="min-h-11 min-w-11 h-9 w-9 text-destructive hover:text-destructive"
+            className="min-h-11 min-w-11 h-9 w-9 text-accent-red hover:text-accent-red"
             onClick={() => onDelete(todo.id)}
             aria-label={`Delete "${todo.title}"`}
             data-testid="delete-button"

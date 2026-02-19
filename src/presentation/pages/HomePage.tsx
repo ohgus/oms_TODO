@@ -92,21 +92,21 @@ export function HomePage({ container }: HomePageProps) {
 
   if (isError) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="min-h-screen bg-bg-primary flex items-center justify-center p-4">
         <div className="text-center">
-          <p className="text-destructive text-lg">Error loading data. Please try again.</p>
+          <p className="text-accent-red text-lg">Error loading data. Please try again.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background" data-testid="home-page">
+    <div className="min-h-screen bg-bg-primary" data-testid="home-page">
       <div className="max-w-2xl mx-auto px-4 py-6 sm:py-8">
         {/* Header */}
         <header className="flex items-center gap-3 mb-6">
-          <CheckSquare className="h-8 w-8 text-primary" />
-          <h1 className="text-2xl font-bold text-foreground">TODO</h1>
+          <CheckSquare className="h-8 w-8 text-accent-primary" />
+          <h1 className="text-2xl font-bold text-txt-primary">TODO</h1>
         </header>
 
         {/* Add Todo Form */}
@@ -130,7 +130,7 @@ export function HomePage({ container }: HomePageProps) {
         <section aria-label="Todo list">
           {isLoading ? (
             <div className="text-center py-8" data-testid="loading-indicator">
-              <p className="text-muted-foreground">Loading...</p>
+              <p className="text-txt-secondary">Loading...</p>
             </div>
           ) : (
             <TodoList
