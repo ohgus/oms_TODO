@@ -276,7 +276,7 @@ describe("SupabaseTodoRepository", () => {
       const result = await repository.findAll();
 
       expect(result[0].priority).toBe(3);
-      expect(result[0].dueDate).toEqual(new Date("2026-03-15"));
+      expect(result[0].dueDate).toEqual(new Date("2026-03-15T00:00:00"));
     });
 
     it("should map null due_date to undefined", async () => {

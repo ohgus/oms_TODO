@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Todo } from "@domain/entities/Todo";
 import { DEFAULT_PRIORITY } from "@domain/entities/Todo";
 import type { ITodoRepository, TodoFilter } from "@domain/repositories/ITodoRepository";
+import { toDateString } from "@shared/utils/calendar";
 
 interface TodoRow {
   id: string;
@@ -23,7 +24,7 @@ function mapRowToTodo(row: TodoRow): Todo {
     categoryId: row.category_id ?? undefined,
     completed: row.completed,
     priority: (row.priority >= 1 && row.priority <= 3 ? row.priority : DEFAULT_PRIORITY) as Todo["priority"],
-    dueDate: row.due_date ? new Date(row.due_date) : undefined,
+    dueDate: row.due_date ? new Date(row.due_date + "T00:00:00") : undefined,
     createdAt: new Date(row.created_at),
     updatedAt: new Date(row.updated_at),
   };
@@ -38,7 +39,7 @@ function mapTodoToRow(
     category_id: todo.categoryId ?? null,
     completed: todo.completed,
     priority: todo.priority,
-    due_date: todo.dueDate ? todo.dueDate.toISOString().split("T")[0] : null,
+    due_date: todo.dueDate ? toDateString(todo.dueDate) : null,
   };
 }
 
@@ -97,13 +98,13 @@ export class SupabaseTodoRepository implements ITodoRepository {
     }
 
     if (filter?.dueDate !== undefined) {
-      query = query.eq("due_date", filter.dueDate.toISOString().split("T")[0]);
+      query = query.eq("due_date", toDateString(filter.dueDate));
     }
 
     if (filter?.dueDateRange !== undefined) {
       query = query
-        .gte("due_date", filter.dueDateRange.from.toISOString().split("T")[0])
-        .lte("due_date", filter.dueDateRange.to.toISOString().split("T")[0]);
+        .gte("due_date", toDateString(filter.dueDateRange.from))
+        .lte("due_date", toDateString(filter.dueDateRange.to));
     }
 
     const { data, error } = await query;
@@ -124,7 +125,7 @@ export class SupabaseTodoRepository implements ITodoRepository {
         category_id: todo.categoryId ?? null,
         completed: todo.completed,
         priority: todo.priority,
-        due_date: todo.dueDate ? todo.dueDate.toISOString().split("T")[0] : null,
+        due_date: todo.dueDate ? toDateString(todo.dueDate) : null,
         updated_at: new Date().toISOString(),
       })
       .eq("id", todo.id)
