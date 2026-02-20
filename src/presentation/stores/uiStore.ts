@@ -38,7 +38,7 @@ const initialState: UIState = {
   isAddTodoModalOpen: false,
   editingTodo: null,
   activeTab: "today",
-  selectedCalendarDate: null,
+  selectedCalendarDate: now,
   calendarMonth: new Date(now.getFullYear(), now.getMonth(), 1),
 };
 
