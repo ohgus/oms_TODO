@@ -1,11 +1,16 @@
 import { CheckSquare, Plus } from "lucide-react";
-import type { Todo } from "@domain/entities/Todo";
 import type { DIContainer } from "@infrastructure/di/container";
+import type { UpdateTodoInput } from "@domain/entities/Todo";
 import { useTodos } from "@presentation/hooks/useTodos";
 import { useCategories } from "@presentation/hooks/useCategories";
 import { useTodosRealtime } from "@presentation/hooks/useTodosRealtime";
-import { useUIStore, type StatusFilter as StatusFilterType } from "@presentation/stores/uiStore";
+import {
+  useUIStore,
+  useEditingTodo,
+  type StatusFilter as StatusFilterType,
+} from "@presentation/stores/uiStore";
 import { TodoAddModal, type TodoAddFormData } from "@presentation/components/todo/TodoAddModal";
+import { TodoEditModal } from "@presentation/components/todo/TodoEditModal";
 import { TodoList } from "@presentation/components/todo/TodoList";
 import { StatusFilter } from "@presentation/components/todo/StatusFilter";
 import { CategoryFilter } from "@presentation/components/category/CategoryFilter";
@@ -41,15 +46,16 @@ export function HomePage({ container }: HomePageProps) {
   // Enable realtime synchronization
   useTodosRealtime();
 
-  const {
-    statusFilter,
-    categoryFilter,
-    isAddTodoModalOpen,
-    setStatusFilter,
-    setCategoryFilter,
-    openAddTodoModal,
-    closeAddTodoModal,
-  } = useUIStore();
+  const statusFilter = useUIStore((s) => s.statusFilter);
+  const categoryFilter = useUIStore((s) => s.categoryFilter);
+  const isAddTodoModalOpen = useUIStore((s) => s.isAddTodoModalOpen);
+  const setStatusFilter = useUIStore((s) => s.setStatusFilter);
+  const setCategoryFilter = useUIStore((s) => s.setCategoryFilter);
+  const openAddTodoModal = useUIStore((s) => s.openAddTodoModal);
+  const closeAddTodoModal = useUIStore((s) => s.closeAddTodoModal);
+  const openEditTodoModal = useUIStore((s) => s.openEditTodoModal);
+  const closeEditTodoModal = useUIStore((s) => s.closeEditTodoModal);
+  const editingTodo = useEditingTodo();
 
   const todoFilterOptions = buildFilterOptions(statusFilter, categoryFilter);
 
@@ -58,6 +64,7 @@ export function HomePage({ container }: HomePageProps) {
     isLoading: isTodosLoading,
     isError: isTodosError,
     addTodo,
+    updateTodo,
     toggleTodo,
     deleteTodo,
   } = useTodos(container.todoRepository, todoFilterOptions);
@@ -82,8 +89,9 @@ export function HomePage({ container }: HomePageProps) {
     closeAddTodoModal();
   };
 
-  const handleEdit = (_todo: Todo) => {
-    // TODO: Implement edit functionality in Phase 4
+  const handleUpdateTodo = async (id: string, data: UpdateTodoInput) => {
+    await updateTodo({ id, ...data });
+    closeEditTodoModal();
   };
 
   if (isError) {
@@ -140,7 +148,7 @@ export function HomePage({ container }: HomePageProps) {
               categories={categories}
               onToggleComplete={toggleTodo}
               onDelete={deleteTodo}
-              onEdit={handleEdit}
+              onEdit={openEditTodoModal}
               emptyMessage={EMPTY_MESSAGES[statusFilter]}
             />
           )}
@@ -153,6 +161,16 @@ export function HomePage({ container }: HomePageProps) {
             if (!open) closeAddTodoModal();
           }}
           onSubmit={handleAddTodo}
+          categories={categories}
+        />
+
+        {/* Edit Todo Modal */}
+        <TodoEditModal
+          todo={editingTodo}
+          onOpenChange={(open) => {
+            if (!open) closeEditTodoModal();
+          }}
+          onSubmit={handleUpdateTodo}
           categories={categories}
         />
       </div>

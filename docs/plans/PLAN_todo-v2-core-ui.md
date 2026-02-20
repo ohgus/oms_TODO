@@ -2,7 +2,7 @@
 
 **Status**: 🔄 In Progress
 **Started**: 2026-02-19
-**Last Updated**: 2026-02-19
+**Last Updated**: 2026-02-20
 **Estimated Completion**: -
 
 **Plan Sequence**: Plan A (기반) → **Plan B (핵심 UI)** → Plan C (달력)
@@ -311,13 +311,13 @@ pnpm audit
 
 **Goal**: TodoEditModal 구현 + HomePage 연결 (기존 handleEdit 주석 대체)
 **Estimated Time**: 2.5 hours
-**Status**: ⏳ Pending
+**Status**: ✅ Complete
 
 #### Tasks
 
 **RED: Write Failing Tests First**
 
-- [ ] **Test 4.1**: uiStore editingTodo 상태 테스트
+- [x] **Test 4.1**: uiStore editingTodo 상태 테스트
   - File(s): `tests/unit/stores/uiStore.test.ts`
   - Expected: Tests FAIL — editingTodo 상태/액션 미존재
   - Details:
@@ -325,8 +325,8 @@ pnpm audit
     - `closeEditTodoModal()` → editingTodo가 null로 초기화
     - `useEditingTodo` 셀렉터 동작
 
-- [ ] **Test 4.2**: TodoEditModal 통합 테스트
-  - File(s): `tests/unit/components/todo/TodoEditModal.test.tsx`
+- [x] **Test 4.2**: TodoEditModal 통합 테스트
+  - File(s): `tests/unit/presentation/components/TodoEditModal.test.tsx`
   - Expected: Tests FAIL — TodoEditModal 컴포넌트 미존재
   - Details:
     - todo=null 시 모달 닫힘
@@ -336,7 +336,7 @@ pnpm audit
 
 **GREEN: Implement to Make Tests Pass**
 
-- [ ] **Task 4.3**: uiStore 확장
+- [x] **Task 4.3**: uiStore 확장
   - File(s): `src/presentation/stores/uiStore.ts`
   - Goal: Test 4.1 통과
   - Details:
@@ -344,38 +344,39 @@ pnpm audit
     - UIActions: `openEditTodoModal`, `closeEditTodoModal` 추가
     - 셀렉터: `useEditingTodo` 추가
 
-- [ ] **Task 4.4**: TodoEditModal 구현
+- [x] **Task 4.4**: TodoEditModal 구현
   - File(s): `src/presentation/components/todo/TodoEditModal.tsx` (신규)
   - Goal: Test 4.2 통과
   - Details:
     - Props: `todo: Todo | null`, `onOpenChange`, `onSubmit: (id, data) => void`, `categories`
     - open 조건: `todo !== null`
-    - useEffect로 todo 변경 시 폼 상태 프리필
+    - Wrapper + Inner Form 패턴 (`key={todo.id}`) — useEffect 대신 remount로 프리필
     - TodoAddModal과 동일한 Drawer + 폼 구조
     - 타이틀: "TODO 수정", 버튼: "수정하기"
 
-- [ ] **Task 4.5**: HomePage에 수정 모달 연결
+- [x] **Task 4.5**: HomePage에 수정 모달 연결
   - File(s): `src/presentation/pages/HomePage.tsx`
   - Goal: 기존 handleEdit 주석을 실제 구현으로 교체
   - Details:
     - `editingTodo = useEditingTodo()`
-    - `handleEdit = (todo) => openEditTodoModal(todo)`
+    - `onEdit={openEditTodoModal}` 직접 전달 (래퍼 핸들러 불필요)
     - `handleUpdateTodo = async (id, data) => { await updateTodo({...}); closeEditTodoModal(); }`
     - TodoEditModal 렌더링 추가
+    - `useUIStore()` 전체 구독 → 개별 셀렉터로 전환 (Phase 3 리뷰 이슈 해결)
 
 **REFACTOR: Clean Up Code**
 
-- [ ] **Task 4.6**: 리팩터링
+- [x] **Task 4.6**: 리팩터링
   - Files: 이 Phase에서 변경/생성한 모든 파일
   - Goal: 코드 품질 개선, 테스트 통과 유지
   - Checklist:
-    - [ ] TodoAddModal / TodoEditModal 간 공통 패턴 정리
-    - [ ] useEffect 프리필 로직의 dependency 정확성
-    - [ ] 모달 닫기 시 editingTodo 정리 확인
+    - [x] TodoAddModal / TodoEditModal 간 공통 패턴 정리 — 동일 Drawer+폼 구조, 공통화 불필요 (2파일)
+    - [x] useEffect 프리필 → key remount 패턴으로 대체 (React 19 lint 에러 해결)
+    - [x] 모달 닫기 시 editingTodo 정리 확인 — onOpenChange에서 closeEditTodoModal 호출
 
 **🔍 CODE REVIEW: `/frontend-code-review` 실행 및 이슈 해결**
 
-- [ ] **Review 4.7**: `/frontend-code-review` 실행
+- [x] **Review 4.7**: `/frontend-code-review` 실행
   - 대상 경로:
     - `src/presentation/components/todo/TodoEditModal.tsx`
     - `src/presentation/stores/uiStore.ts`
@@ -385,27 +386,27 @@ pnpm audit
     - `/frontend-code-review src/presentation/stores/uiStore.ts`
     - `/frontend-code-review src/presentation/pages/HomePage.tsx`
   - Details:
-    - 리뷰 결과에서 발견된 이슈를 아래 체크리스트에 기록
-    - 각 이슈를 수정하고 테스트 재실행으로 회귀 없음 확인
+    - 3개 파일 모두 4축 양호 판정
+    - 경미 이슈 2건 (수정 불필요)
 
-- [ ] **Review 4.7.1**: 가독성(Readability) 이슈 수정
-  - 발견된 이슈: (리뷰 후 기록)
-  - 수정 내용: (수정 후 기록)
+- [x] **Review 4.7.1**: 가독성(Readability) 이슈 수정
+  - 발견된 이슈: TodoEditModal — `new Date(dueDate + "T00:00:00")` 인라인 파싱 (경미, TodoAddModal과 동일 패턴)
+  - 수정 내용: 현재 2곳이므로 성급한 추상화 지양. Phase 5 DateBadge 추가 시 3곳 이상이면 추출 예정
 
-- [ ] **Review 4.7.2**: 예측 가능성(Predictability) 이슈 수정
-  - 발견된 이슈: (리뷰 후 기록)
-  - 수정 내용: (수정 후 기록)
+- [x] **Review 4.7.2**: 예측 가능성(Predictability) 이슈 수정
+  - 발견된 이슈: 없음
+  - 수정 내용: N/A
 
-- [ ] **Review 4.7.3**: 응집도(Cohesion) 이슈 수정
-  - 발견된 이슈: (리뷰 후 기록)
-  - 수정 내용: (수정 후 기록)
+- [x] **Review 4.7.3**: 응집도(Cohesion) 이슈 수정
+  - 발견된 이슈: 없음
+  - 수정 내용: N/A
 
-- [ ] **Review 4.7.4**: 결합도(Coupling) 이슈 수정
-  - 발견된 이슈: (리뷰 후 기록)
-  - 수정 내용: (수정 후 기록)
+- [x] **Review 4.7.4**: 결합도(Coupling) 이슈 수정
+  - 발견된 이슈: HomePage — 셀렉터 스타일 혼용 (인라인 셀렉터 + useEditingTodo 훅, 경미)
+  - 수정 내용: 동작 동일하므로 현재 수정 불필요
 
-- [ ] **Review 4.7.5**: 수정 후 테스트 재실행 통과 확인
-  - `pnpm run test:run` → 100% PASS
+- [x] **Review 4.7.5**: 수정 후 테스트 재실행 통과 확인
+  - `pnpm run test:run` → 230 tests, 24 files, 100% PASS
   - `pnpm run build` → 에러 없음
 
 #### Quality Gate
@@ -414,30 +415,31 @@ pnpm audit
 
 **TDD Compliance** (CRITICAL):
 
-- [ ] **Red Phase**: Tests were written FIRST and initially failed
-- [ ] **Green Phase**: Production code written to make tests pass
-- [ ] **Refactor Phase**: Code improved while tests still pass
+- [x] **Red Phase**: Tests were written FIRST and initially failed (5 tests failed)
+- [x] **Green Phase**: Production code written to make tests pass (230/230)
+- [x] **Refactor Phase**: Code improved while tests still pass (key remount 패턴 적용)
 
 **Build & Tests**:
 
-- [ ] **Build**: `pnpm run build` 에러 없음
-- [ ] **All Tests Pass**: `pnpm run test:run` 100% 통과
-- [ ] **No Flaky Tests**: 3회 반복 일관성
+- [x] **Build**: `pnpm run build` 에러 없음
+- [x] **All Tests Pass**: `pnpm run test:run` 230 tests, 24 files, 100% 통과
+- [x] **No Flaky Tests**: 3회 반복 일관성 확인
 
 **Code Quality**:
 
-- [ ] **Linting**: `pnpm run lint` 에러 없음
-- [ ] **Type Safety**: TypeScript 컴파일 에러 없음
+- [x] **Linting**: `pnpm run lint` 에러 없음 (기존 warnings만)
+- [x] **Type Safety**: TypeScript 컴파일 에러 없음
 
 **Frontend Code Review** (프론트엔드 Phase 필수):
 
-- [ ] `/frontend-code-review src/presentation/components/todo/TodoEditModal.tsx` 실행
-- [ ] `/frontend-code-review src/presentation/stores/uiStore.ts` 실행
-- [ ] **가독성** 이슈 수정
-- [ ] **예측 가능성** 이슈 수정
-- [ ] **응집도** 이슈 수정
-- [ ] **결합도** 이슈 수정
-- [ ] 리뷰 결과 Notes 섹션에 기록
+- [x] `/frontend-code-review src/presentation/components/todo/TodoEditModal.tsx` 실행
+- [x] `/frontend-code-review src/presentation/stores/uiStore.ts` 실행
+- [x] `/frontend-code-review src/presentation/pages/HomePage.tsx` 실행
+- [x] **가독성** 이슈 수정 — 경미 1건 (날짜 파싱 인라인, 추후 추출)
+- [x] **예측 가능성** 이슈 수정 — 없음
+- [x] **응집도** 이슈 수정 — 없음
+- [x] **결합도** 이슈 수정 — 경미 1건 (셀렉터 혼용, 수정 불필요)
+- [x] 리뷰 결과 Notes 섹션에 기록
 
 **Validation Commands**:
 
@@ -448,6 +450,7 @@ pnpm run lint
 
 /frontend-code-review src/presentation/components/todo/TodoEditModal.tsx
 /frontend-code-review src/presentation/stores/uiStore.ts
+/frontend-code-review src/presentation/pages/HomePage.tsx
 ```
 
 **Manual Test Checklist**:
@@ -672,10 +675,10 @@ pnpm run lint
 ### Completion Status
 
 - **Phase 3**: ✅ 100%
-- **Phase 4**: ⏳ 0%
+- **Phase 4**: ✅ 100%
 - **Phase 5**: ⏳ 0%
 
-**Overall Progress**: 33% complete
+**Overall Progress**: 67% complete
 
 ### Time Tracking
 
@@ -699,26 +702,33 @@ pnpm run lint
 
 ### Code Review Learnings
 
-**가독성 개선 사항**:
+**Phase 3 가독성 개선 사항**:
 - `<button>` 요소에 `role="button"` 불필요 (기본 role)
 - 데이터 중복 필드(`starCount === value`) 제거하여 single source of truth 유지
 
-**예측 가능성 개선 사항**:
+**Phase 3 예측 가능성 개선 사항**:
 - Props 인터페이스에 도메인 타입(`Priority`, `Category`) 직접 사용으로 타입 안전성 확보
 
-**응집도 개선 사항**:
+**Phase 3 응집도 개선 사항**:
 - `PRIORITY_OPTIONS` 상수를 컴포넌트와 같은 파일에 배치하여 코로케이션 원칙 준수
 
-**결합도 개선 사항**:
-- `useUIStore()` 전체 구독 대신 개별 셀렉터 사용을 Phase 4에서 적용 예정
+**Phase 4 결합도 개선 사항**:
+- `useUIStore()` 전체 구독 → 개별 셀렉터(`useUIStore((s) => s.xxx)`)로 전환 완료
+- 불필요한 리렌더링 방지
+
+**Phase 4 리팩터링 학습**:
+- React 19 lint 규칙 `react-hooks/set-state-in-effect`로 인해 `useEffect` 내 `setState` 금지
+- 해결: Wrapper + Inner Form + `key` remount 패턴으로 프리필 구현 (useEffect 완전 제거)
+- 이 패턴이 코드도 더 깔끔하고 React 권장 사항에 부합
 
 ### Blockers Encountered
 
 - vaul jsdom 호환성 이슈 — mock으로 해결 (setup-vaul-mock.ts)
+- React 19 `set-state-in-effect` lint 에러 — key remount 패턴으로 해결
 
 ### Improvements for Future Plans
 
-- (완료 후 기록)
+- 날짜 파싱 `new Date(dueDate + "T00:00:00")` 패턴이 TodoAddModal/TodoEditModal 2곳에 존재. Phase 5에서 DateBadge 추가 시 3곳 이상이면 유틸 함수로 추출 검토
 
 ---
 
@@ -791,5 +801,5 @@ pnpm run lint
 ---
 
 **Plan Status**: 🔄 In Progress
-**Next Action**: Phase 4 (TODO 수정 모달) 시작
+**Next Action**: Phase 5 (TodoItem 변경 + DateBadge + PriorityStars) 시작
 **Blocked By**: -

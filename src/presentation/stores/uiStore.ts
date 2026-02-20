@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import type { Todo } from "@domain/entities/Todo";
 
 export type StatusFilter = "all" | "active" | "completed";
 
@@ -6,6 +7,7 @@ interface UIState {
   statusFilter: StatusFilter;
   categoryFilter: string | null;
   isAddTodoModalOpen: boolean;
+  editingTodo: Todo | null;
 }
 
 interface UIActions {
@@ -14,6 +16,8 @@ interface UIActions {
   toggleAddTodoModal: () => void;
   openAddTodoModal: () => void;
   closeAddTodoModal: () => void;
+  openEditTodoModal: (todo: Todo) => void;
+  closeEditTodoModal: () => void;
   resetFilters: () => void;
 }
 
@@ -23,6 +27,7 @@ const initialState: UIState = {
   statusFilter: "all",
   categoryFilter: null,
   isAddTodoModalOpen: false,
+  editingTodo: null,
 };
 
 export const useUIStore = create<UIStore>((set) => ({
@@ -38,6 +43,10 @@ export const useUIStore = create<UIStore>((set) => ({
 
   closeAddTodoModal: () => set({ isAddTodoModalOpen: false }),
 
+  openEditTodoModal: (todo) => set({ editingTodo: todo }),
+
+  closeEditTodoModal: () => set({ editingTodo: null }),
+
   resetFilters: () =>
     set({
       statusFilter: "all",
@@ -49,3 +58,4 @@ export const useUIStore = create<UIStore>((set) => ({
 export const useStatusFilter = () => useUIStore((state) => state.statusFilter);
 export const useCategoryFilter = () => useUIStore((state) => state.categoryFilter);
 export const useIsAddTodoModalOpen = () => useUIStore((state) => state.isAddTodoModalOpen);
+export const useEditingTodo = () => useUIStore((state) => state.editingTodo);

@@ -114,7 +114,7 @@ describe("HomePage", () => {
     container = new DIContainer(mockTodoRepository, mockCategoryRepository);
     vi.clearAllMocks();
     // Reset Zustand store state
-    useUIStore.setState({ statusFilter: "all", categoryFilter: null, isAddTodoModalOpen: false });
+    useUIStore.setState({ statusFilter: "all", categoryFilter: null, isAddTodoModalOpen: false, editingTodo: null });
   });
 
   describe("페이지 로드", () => {
