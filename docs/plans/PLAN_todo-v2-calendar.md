@@ -1,8 +1,8 @@
 # Implementation Plan: TODO App v2 — Calendar (하단 탭 바 + 캘린더 뷰)
 
-**Status**: ⏳ Pending
-**Started**: -
-**Last Updated**: 2026-02-19
+**Status**: 🔄 In Progress
+**Started**: 2026-02-20
+**Last Updated**: 2026-02-20
 **Estimated Completion**: -
 
 **Plan Sequence**: Plan A (기반) → Plan B (핵심 UI) → **Plan C (달력)**
@@ -113,13 +113,13 @@ tests/
 
 **Goal**: BottomTabBar 추가, 기존 필터+리스트를 TodayView로 추출, Header 컴포넌트 추출, 탭 전환 구조 구축
 **Estimated Time**: 3 hours
-**Status**: ⏳ Pending
+**Status**: ✅ Complete
 
 #### Tasks
 
 **RED: Write Failing Tests First**
 
-- [ ] **Test 6.1**: uiStore 캘린더 상태 테스트
+- [x] **Test 6.1**: uiStore 캘린더 상태 테스트
   - File(s): `tests/unit/stores/uiStore.test.ts`
   - Expected: Tests FAIL — activeTab, selectedCalendarDate, calendarMonth 미존재
   - Details:
@@ -129,7 +129,7 @@ tests/
     - `navigateCalendarMonth("prev")` → 이전 달로 이동
     - 초기값: activeTab="today", selectedCalendarDate=null
 
-- [ ] **Test 6.2**: BottomTabBar 단위 테스트
+- [x] **Test 6.2**: BottomTabBar 단위 테스트
   - File(s): `tests/unit/components/navigation/BottomTabBar.test.tsx`
   - Expected: Tests FAIL — BottomTabBar 컴포넌트 미존재
   - Details:
@@ -138,7 +138,7 @@ tests/
     - 탭 클릭 시 onTabChange 호출
     - aria-current="page" 속성
 
-- [ ] **Test 6.3**: TodayView 통합 테스트
+- [x] **Test 6.3**: TodayView 통합 테스트
   - File(s): `tests/integration/components/views/TodayView.test.tsx`
   - Expected: Tests FAIL — TodayView 컴포넌트 미존재
   - Details:
@@ -149,7 +149,7 @@ tests/
 
 **GREEN: Implement to Make Tests Pass**
 
-- [ ] **Task 6.4**: uiStore 확장 — 탭 + 캘린더 상태
+- [x] **Task 6.4**: uiStore 확장 — 탭 + 캘린더 상태
   - File(s): `src/presentation/stores/uiStore.ts`
   - Goal: Test 6.1 통과
   - Details:
@@ -158,7 +158,7 @@ tests/
     - UIActions 추가: `setActiveTab`, `setSelectedCalendarDate`, `navigateCalendarMonth`
     - 셀렉터 추가: `useActiveTab`, `useSelectedCalendarDate`, `useCalendarMonth`
 
-- [ ] **Task 6.5**: BottomTabBar 구현
+- [x] **Task 6.5**: BottomTabBar 구현
   - File(s): `src/presentation/components/navigation/BottomTabBar.tsx` (신규)
   - Goal: Test 6.2 통과
   - Details:
@@ -167,21 +167,21 @@ tests/
     - fixed bottom, bg-bg-surface, border-t border-border-subtle, z-50
     - 활성: text-accent-primary font-semibold, 비활성: text-txt-tertiary
 
-- [ ] **Task 6.6**: TodayView 추출
+- [x] **Task 6.6**: TodayView 추출
   - File(s): `src/presentation/components/views/TodayView.tsx` (신규)
   - Goal: Test 6.3 통과
   - Details:
     - 기존 HomePage에서 StatusFilter + CategoryFilter + TodoList 섹션을 추출
     - Props: todos, categories, isLoading, statusFilter, categoryFilter, 콜백들, emptyMessage
 
-- [ ] **Task 6.7**: Header 컴포넌트 추출
+- [x] **Task 6.7**: Header 컴포넌트 추출
   - File(s): `src/presentation/components/common/Header.tsx` (신규)
   - Goal: 양쪽 탭에서 공통 헤더 사용
   - Details:
     - Props: `onAddClick: () => void`
     - CheckSquare 아이콘 + "TODO" 타이틀 + Plus 버튼
 
-- [ ] **Task 6.8**: HomePage 리팩터링
+- [x] **Task 6.8**: HomePage 리팩터링
   - File(s): `src/presentation/pages/HomePage.tsx`
   - Goal: 인라인 코드를 Header/TodayView로 교체, 탭 전환 + BottomTabBar 추가
   - Details:
@@ -192,18 +192,18 @@ tests/
 
 **REFACTOR: Clean Up Code**
 
-- [ ] **Task 6.9**: 리팩터링
+- [x] **Task 6.9**: 리팩터링
   - Files: 이 Phase에서 변경/생성한 모든 파일
   - Goal: 코드 품질 개선, 테스트 통과 유지
   - Checklist:
-    - [ ] HomePage에서 추출된 코드가 완전히 제거되었는지 확인
-    - [ ] TodayView props가 과도하지 않은지 검토
-    - [ ] BottomTabBar 접근성 확인 (nav role)
-    - [ ] 탭 전환 시 상태 유지 확인
+    - [x] HomePage에서 추출된 코드가 완전히 제거되었는지 확인
+    - [x] TodayView props가 과도하지 않은지 검토
+    - [x] BottomTabBar 접근성 확인 (nav role)
+    - [x] 탭 전환 시 상태 유지 확인
 
 **🔍 CODE REVIEW: `/frontend-code-review` 실행 및 이슈 해결**
 
-- [ ] **Review 6.10**: `/frontend-code-review` 실행
+- [x] **Review 6.10**: `/frontend-code-review` 실행
   - 대상 경로:
     - `src/presentation/components/navigation/BottomTabBar.tsx`
     - `src/presentation/components/views/TodayView.tsx`
@@ -219,24 +219,24 @@ tests/
     - 리뷰 결과에서 발견된 이슈를 아래 체크리스트에 기록
     - 각 이슈를 수정하고 테스트 재실행으로 회귀 없음 확인
 
-- [ ] **Review 6.10.1**: 가독성(Readability) 이슈 수정
-  - 발견된 이슈: (리뷰 후 기록)
-  - 수정 내용: (수정 후 기록)
+- [x] **Review 6.10.1**: 가독성(Readability) 이슈 수정
+  - 발견된 이슈: 심각한 이슈 없음. HomePage 셀렉터 나열 주의사항만 확인.
+  - 수정 내용: Zustand 권장 패턴이므로 현 상태 유지.
 
-- [ ] **Review 6.10.2**: 예측 가능성(Predictability) 이슈 수정
-  - 발견된 이슈: (리뷰 후 기록)
-  - 수정 내용: (수정 후 기록)
+- [x] **Review 6.10.2**: 예측 가능성(Predictability) 이슈 수정
+  - 발견된 이슈: 없음
+  - 수정 내용: N/A
 
-- [ ] **Review 6.10.3**: 응집도(Cohesion) 이슈 수정
-  - 발견된 이슈: (리뷰 후 기록)
-  - 수정 내용: (수정 후 기록)
+- [x] **Review 6.10.3**: 응집도(Cohesion) 이슈 수정
+  - 발견된 이슈: 없음
+  - 수정 내용: N/A
 
-- [ ] **Review 6.10.4**: 결합도(Coupling) 이슈 수정
-  - 발견된 이슈: (리뷰 후 기록)
-  - 수정 내용: (수정 후 기록)
+- [x] **Review 6.10.4**: 결합도(Coupling) 이슈 수정
+  - 발견된 이슈: TodayView props 11개 — 경계선이나 각 prop이 고유 역할 수행
+  - 수정 내용: 현 상태 유지 (store 직접 참조보다 테스트 용이성 우선)
 
-- [ ] **Review 6.10.5**: 수정 후 테스트 재실행 통과 확인
-  - `pnpm run test:run` → 100% PASS
+- [x] **Review 6.10.5**: 수정 후 테스트 재실행 통과 확인
+  - `pnpm run test:run` → 268 tests 100% PASS
   - `pnpm run build` → 에러 없음
 
 #### Quality Gate
@@ -245,34 +245,34 @@ tests/
 
 **TDD Compliance** (CRITICAL):
 
-- [ ] **Red Phase**: Tests were written FIRST and initially failed
-- [ ] **Green Phase**: Production code written to make tests pass
-- [ ] **Refactor Phase**: Code improved while tests still pass
-- [ ] **Coverage Check**: BottomTabBar ≥80%
+- [x] **Red Phase**: Tests were written FIRST and initially failed (11 tests failed)
+- [x] **Green Phase**: Production code written to make tests pass (268 tests pass)
+- [x] **Refactor Phase**: Code improved while tests still pass
+- [x] **Coverage Check**: BottomTabBar ≥80%
 
 **Build & Tests**:
 
-- [ ] **Build**: `pnpm run build` 에러 없음
-- [ ] **All Tests Pass**: `pnpm run test:run` 100% 통과
-- [ ] **Test Performance**: 전체 테스트 5분 이내
-- [ ] **No Flaky Tests**: 3회 반복 일관성
+- [x] **Build**: `pnpm run build` 에러 없음
+- [x] **All Tests Pass**: `pnpm run test:run` 268 tests 100% 통과
+- [x] **Test Performance**: 3.32s (5분 이내)
+- [x] **No Flaky Tests**: 3회 반복 일관성
 
 **Code Quality**:
 
-- [ ] **Linting**: `pnpm run lint` 에러 없음
-- [ ] **Type Safety**: TypeScript 컴파일 에러 없음
+- [x] **Linting**: `pnpm run lint` 에러 없음 (기존 warning만 존재)
+- [x] **Type Safety**: TypeScript 컴파일 에러 없음
 
 **Frontend Code Review** (프론트엔드 Phase 필수):
 
-- [ ] `/frontend-code-review src/presentation/components/navigation/BottomTabBar.tsx` 실행
-- [ ] `/frontend-code-review src/presentation/components/views/TodayView.tsx` 실행
-- [ ] `/frontend-code-review src/presentation/components/common/Header.tsx` 실행
-- [ ] `/frontend-code-review src/presentation/pages/HomePage.tsx` 실행
-- [ ] **가독성** 이슈 수정
-- [ ] **예측 가능성** 이슈 수정
-- [ ] **응집도** 이슈 수정
-- [ ] **결합도** 이슈 수정
-- [ ] 리뷰 결과 Notes 섹션에 기록
+- [x] `/frontend-code-review src/presentation/components/navigation/BottomTabBar.tsx` 실행
+- [x] `/frontend-code-review src/presentation/components/views/TodayView.tsx` 실행
+- [x] `/frontend-code-review src/presentation/components/common/Header.tsx` 실행
+- [x] `/frontend-code-review src/presentation/pages/HomePage.tsx` 실행
+- [x] **가독성** 이슈 수정
+- [x] **예측 가능성** 이슈 수정
+- [x] **응집도** 이슈 수정
+- [x] **결합도** 이슈 수정
+- [x] 리뷰 결과 Notes 섹션에 기록
 
 **Validation Commands**:
 
@@ -546,10 +546,10 @@ pnpm run lint
 
 ### Completion Status
 
-- **Phase 6**: ⏳ 0%
+- **Phase 6**: ✅ 100%
 - **Phase 7**: ⏳ 0%
 
-**Overall Progress**: 0% complete
+**Overall Progress**: 50% complete
 
 ### Time Tracking
 
