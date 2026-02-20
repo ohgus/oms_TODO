@@ -1,33 +1,27 @@
-import { CheckSquare, Plus } from "lucide-react";
 import type { DIContainer } from "@infrastructure/di/container";
 import type { UpdateTodoInput } from "@domain/entities/Todo";
 import { useTodos } from "@presentation/hooks/useTodos";
 import { useCategories } from "@presentation/hooks/useCategories";
 import { useTodosRealtime } from "@presentation/hooks/useTodosRealtime";
-import {
-  useUIStore,
-  useEditingTodo,
-  type StatusFilter as StatusFilterType,
-} from "@presentation/stores/uiStore";
+import { useUIStore, useEditingTodo, type StatusFilter } from "@presentation/stores/uiStore";
 import { TodoAddModal, type TodoAddFormData } from "@presentation/components/todo/TodoAddModal";
 import { TodoEditModal } from "@presentation/components/todo/TodoEditModal";
-import { TodoList } from "@presentation/components/todo/TodoList";
-import { StatusFilter } from "@presentation/components/todo/StatusFilter";
-import { CategoryFilter } from "@presentation/components/category/CategoryFilter";
-import { Button } from "@presentation/components/ui/button";
+import { Header } from "@presentation/components/common/Header";
+import { TodayView } from "@presentation/components/views/TodayView";
+import { BottomTabBar } from "@presentation/components/navigation/BottomTabBar";
 
 export interface HomePageProps {
   container: DIContainer;
 }
 
-const EMPTY_MESSAGES: Record<StatusFilterType, string> = {
+const EMPTY_MESSAGES: Record<StatusFilter, string> = {
   all: "No todos yet. Add one above!",
   active: "No active todos",
   completed: "No completed todos yet",
 };
 
 function buildFilterOptions(
-  statusFilter: StatusFilterType,
+  statusFilter: StatusFilter,
   categoryFilter: string | null
 ): { completed?: boolean; categoryId?: string } | undefined {
   const categoryOption = categoryFilter ? { categoryId: categoryFilter } : {};
@@ -43,14 +37,15 @@ function buildFilterOptions(
 }
 
 export function HomePage({ container }: HomePageProps) {
-  // Enable realtime synchronization
   useTodosRealtime();
 
   const statusFilter = useUIStore((s) => s.statusFilter);
   const categoryFilter = useUIStore((s) => s.categoryFilter);
   const isAddTodoModalOpen = useUIStore((s) => s.isAddTodoModalOpen);
+  const activeTab = useUIStore((s) => s.activeTab);
   const setStatusFilter = useUIStore((s) => s.setStatusFilter);
   const setCategoryFilter = useUIStore((s) => s.setCategoryFilter);
+  const setActiveTab = useUIStore((s) => s.setActiveTab);
   const openAddTodoModal = useUIStore((s) => s.openAddTodoModal);
   const closeAddTodoModal = useUIStore((s) => s.closeAddTodoModal);
   const openEditTodoModal = useUIStore((s) => s.openEditTodoModal);
@@ -105,56 +100,32 @@ export function HomePage({ container }: HomePageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-bg-primary" data-testid="home-page">
+    <div className="min-h-screen bg-bg-primary pb-20" data-testid="home-page">
       <div className="max-w-2xl mx-auto px-4 py-6 sm:py-8">
-        {/* Header */}
-        <header className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <CheckSquare className="h-8 w-8 text-accent-primary" />
-            <h1 className="text-2xl font-bold text-txt-primary">TODO</h1>
+        <Header onAddClick={openAddTodoModal} />
+
+        {activeTab === "today" && (
+          <TodayView
+            todos={todos}
+            categories={categories}
+            isLoading={isLoading}
+            statusFilter={statusFilter}
+            categoryFilter={categoryFilter}
+            onStatusFilterChange={setStatusFilter}
+            onCategoryFilterChange={setCategoryFilter}
+            onToggleComplete={toggleTodo}
+            onDelete={deleteTodo}
+            onEdit={openEditTodoModal}
+            emptyMessage={EMPTY_MESSAGES[statusFilter]}
+          />
+        )}
+
+        {activeTab === "calendar" && (
+          <div className="text-center py-12" data-testid="calendar-placeholder">
+            <p className="text-txt-secondary">달력 뷰 (Phase 7에서 구현)</p>
           </div>
-          <Button
-            onClick={openAddTodoModal}
-            size="icon"
-            className="min-h-11 min-w-11 bg-accent-primary text-white hover:bg-accent-primary/90"
-            aria-label="Add todo"
-            data-testid="add-todo-button"
-          >
-            <Plus className="h-5 w-5" />
-          </Button>
-        </header>
+        )}
 
-        {/* Filters */}
-        <section className="space-y-3 mb-6" aria-label="Filters">
-          <StatusFilter selectedStatus={statusFilter} onSelect={setStatusFilter} />
-          {categories.length > 0 && (
-            <CategoryFilter
-              categories={categories}
-              selectedCategoryId={categoryFilter ?? undefined}
-              onSelect={(id) => setCategoryFilter(id ?? null)}
-            />
-          )}
-        </section>
-
-        {/* Todo List */}
-        <section aria-label="Todo list">
-          {isLoading ? (
-            <div className="text-center py-8" data-testid="loading-indicator">
-              <p className="text-txt-secondary">Loading...</p>
-            </div>
-          ) : (
-            <TodoList
-              todos={todos}
-              categories={categories}
-              onToggleComplete={toggleTodo}
-              onDelete={deleteTodo}
-              onEdit={openEditTodoModal}
-              emptyMessage={EMPTY_MESSAGES[statusFilter]}
-            />
-          )}
-        </section>
-
-        {/* Add Todo Modal */}
         <TodoAddModal
           open={isAddTodoModalOpen}
           onOpenChange={(open) => {
@@ -164,7 +135,6 @@ export function HomePage({ container }: HomePageProps) {
           categories={categories}
         />
 
-        {/* Edit Todo Modal */}
         <TodoEditModal
           todo={editingTodo}
           onOpenChange={(open) => {
@@ -174,6 +144,8 @@ export function HomePage({ container }: HomePageProps) {
           categories={categories}
         />
       </div>
+
+      <BottomTabBar activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   );
 }
