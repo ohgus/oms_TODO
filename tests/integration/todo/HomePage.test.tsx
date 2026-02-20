@@ -357,7 +357,9 @@ describe("HomePage", () => {
       const allFilters = screen.getAllByRole("button", { name: /all/i });
       await user.click(allFilters[0]);
 
-      expect(mockTodoRepository.findAll).toHaveBeenLastCalledWith(undefined);
+      expect(mockTodoRepository.findAll).toHaveBeenLastCalledWith(
+        expect.objectContaining({ dueDate: expect.any(Date) })
+      );
     });
   });
 

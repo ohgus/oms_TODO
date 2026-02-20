@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import type { DIContainer } from "@infrastructure/di/container";
 import type { UpdateTodoInput } from "@domain/entities/Todo";
 import { useTodos } from "@presentation/hooks/useTodos";
@@ -9,6 +10,7 @@ import { TodoEditModal } from "@presentation/components/todo/TodoEditModal";
 import { Header } from "@presentation/components/common/Header";
 import { TodayView } from "@presentation/components/views/TodayView";
 import { BottomTabBar } from "@presentation/components/navigation/BottomTabBar";
+import { CalendarView } from "@presentation/components/calendar/CalendarView";
 
 export interface HomePageProps {
   container: DIContainer;
@@ -23,15 +25,13 @@ const EMPTY_MESSAGES: Record<StatusFilter, string> = {
 function buildFilterOptions(
   statusFilter: StatusFilter,
   categoryFilter: string | null
-): { completed?: boolean; categoryId?: string } | undefined {
+): { completed?: boolean; categoryId?: string; dueDate?: Date } {
+  const today = new Date();
   const categoryOption = categoryFilter ? { categoryId: categoryFilter } : {};
 
-  if (statusFilter === "all") {
-    return categoryFilter ? categoryOption : undefined;
-  }
-
   return {
-    completed: statusFilter === "completed",
+    dueDate: today,
+    ...(statusFilter !== "all" && { completed: statusFilter === "completed" }),
     ...categoryOption,
   };
 }
@@ -52,7 +52,10 @@ export function HomePage({ container }: HomePageProps) {
   const closeEditTodoModal = useUIStore((s) => s.closeEditTodoModal);
   const editingTodo = useEditingTodo();
 
-  const todoFilterOptions = buildFilterOptions(statusFilter, categoryFilter);
+  const todoFilterOptions = useMemo(
+    () => buildFilterOptions(statusFilter, categoryFilter),
+    [statusFilter, categoryFilter]
+  );
 
   const {
     todos,
@@ -121,9 +124,13 @@ export function HomePage({ container }: HomePageProps) {
         )}
 
         {activeTab === "calendar" && (
-          <div className="text-center py-12" data-testid="calendar-placeholder">
-            <p className="text-txt-secondary">달력 뷰 (Phase 7에서 구현)</p>
-          </div>
+          <CalendarView
+            container={container}
+            categories={categories}
+            onToggleComplete={toggleTodo}
+            onDelete={deleteTodo}
+            onEdit={openEditTodoModal}
+          />
         )}
 
         <TodoAddModal
