@@ -13,8 +13,8 @@ const createMockCategory = (overrides: Partial<Category> = {}): Category => ({
 });
 
 const defaultCategories = [
-  createMockCategory({ id: "cat-1", name: "Work" }),
-  createMockCategory({ id: "cat-2", name: "Personal" }),
+  createMockCategory({ id: "cat-1", name: "Work", color: "#6366f1" }),
+  createMockCategory({ id: "cat-2", name: "Personal", color: "#22C55E" }),
 ];
 
 describe("TodoAddModal", () => {
@@ -87,7 +87,7 @@ describe("TodoAddModal", () => {
       expect(screen.getByRole("button", { name: /보통/ })).toHaveAttribute("aria-pressed", "true");
     });
 
-    it("should render date input", () => {
+    it("should render date picker", () => {
       render(
         <TodoAddModal
           open={true}
@@ -97,7 +97,8 @@ describe("TodoAddModal", () => {
         />
       );
 
-      expect(screen.getByLabelText(/마감일/i)).toBeInTheDocument();
+      expect(screen.getByTestId("date-picker")).toBeInTheDocument();
+      expect(screen.getByText("날짜를 선택하세요")).toBeInTheDocument();
     });
 
     it("should render submit button '추가하기'", () => {
@@ -111,6 +112,24 @@ describe("TodoAddModal", () => {
       );
 
       expect(screen.getByRole("button", { name: /추가하기/ })).toBeInTheDocument();
+    });
+  });
+
+  describe("Category color dot", () => {
+    it("각 카테고리 버튼에 컬러 dot이 표시되어야 한다", () => {
+      render(
+        <TodoAddModal
+          open={true}
+          onOpenChange={vi.fn()}
+          onSubmit={vi.fn()}
+          categories={defaultCategories}
+        />
+      );
+
+      const dots = screen.getAllByTestId("category-dot");
+      expect(dots).toHaveLength(2);
+      expect(dots[0]).toHaveStyle({ backgroundColor: "#6366f1" });
+      expect(dots[1]).toHaveStyle({ backgroundColor: "#22C55E" });
     });
   });
 

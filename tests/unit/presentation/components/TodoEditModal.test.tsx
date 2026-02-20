@@ -119,10 +119,11 @@ describe("TodoEditModal", () => {
         />
       );
 
-      expect(screen.getByLabelText(/마감일/i)).toHaveValue("2026-03-15");
+      // DatePicker는 한국어 포맷으로 날짜를 표시
+      expect(screen.getByText("3월 15일 (일)")).toBeInTheDocument();
     });
 
-    it("마감일이 없으면 날짜 필드가 비어있어야 한다", () => {
+    it("마감일이 없으면 placeholder가 표시되어야 한다", () => {
       const todo = createMockTodo({ dueDate: undefined });
 
       render(
@@ -134,7 +135,7 @@ describe("TodoEditModal", () => {
         />
       );
 
-      expect(screen.getByLabelText(/마감일/i)).toHaveValue("");
+      expect(screen.getByText("날짜를 선택하세요")).toBeInTheDocument();
     });
   });
 

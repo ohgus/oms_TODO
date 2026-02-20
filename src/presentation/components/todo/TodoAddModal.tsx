@@ -3,6 +3,8 @@ import type { Category } from "@domain/entities/Category";
 import type { Priority } from "@domain/entities/Todo";
 import { DEFAULT_PRIORITY } from "@domain/entities/Todo";
 import { PrioritySelector } from "@presentation/components/todo/PrioritySelector";
+import { CategorySelector } from "@presentation/components/todo/CategorySelector";
+import { DatePicker } from "@presentation/components/common/DatePicker";
 import {
   Drawer,
   DrawerContent,
@@ -13,7 +15,6 @@ import {
 } from "@presentation/components/ui/drawer";
 import { Input } from "@presentation/components/ui/input";
 import { Button } from "@presentation/components/ui/button";
-import { cn } from "@shared/utils/cn";
 
 export interface TodoAddFormData {
   title: string;
@@ -38,13 +39,13 @@ export function TodoAddModal({
   const [title, setTitle] = useState("");
   const [categoryId, setCategoryId] = useState<string | undefined>(undefined);
   const [priority, setPriority] = useState<Priority>(DEFAULT_PRIORITY);
-  const [dueDate, setDueDate] = useState("");
+  const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
 
   const resetForm = () => {
     setTitle("");
     setCategoryId(undefined);
     setPriority(DEFAULT_PRIORITY);
-    setDueDate("");
+    setDueDate(undefined);
   };
 
   const handleSubmit = () => {
@@ -54,7 +55,7 @@ export function TodoAddModal({
       title: title.trim(),
       categoryId,
       priority,
-      dueDate: dueDate ? new Date(dueDate + "T00:00:00") : undefined,
+      dueDate,
     });
 
     resetForm();
@@ -82,32 +83,11 @@ export function TodoAddModal({
           />
 
           {/* Category */}
-          {categories.length > 0 && (
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-txt-secondary">
-                카테고리
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {categories.map((cat) => (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    onClick={() =>
-                      setCategoryId(categoryId === cat.id ? undefined : cat.id)
-                    }
-                    className={cn(
-                      "px-3 py-1.5 rounded-full text-sm border transition-colors",
-                      categoryId === cat.id
-                        ? "bg-accent-primary text-white border-accent-primary"
-                        : "bg-bg-surface text-txt-secondary border-border-subtle"
-                    )}
-                  >
-                    {cat.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+          <CategorySelector
+            categories={categories}
+            value={categoryId}
+            onChange={setCategoryId}
+          />
 
           {/* Priority */}
           <div className="space-y-2">
@@ -119,18 +99,10 @@ export function TodoAddModal({
 
           {/* Due Date */}
           <div className="space-y-2">
-            <label
-              htmlFor="todo-due-date"
-              className="text-sm font-medium text-txt-secondary"
-            >
+            <label className="text-sm font-medium text-txt-secondary">
               마감일
             </label>
-            <Input
-              id="todo-due-date"
-              type="date"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-            />
+            <DatePicker value={dueDate} onChange={setDueDate} />
           </div>
         </div>
 

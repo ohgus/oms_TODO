@@ -3,6 +3,8 @@ import type { Todo, Priority } from "@domain/entities/Todo";
 import type { Category } from "@domain/entities/Category";
 import type { UpdateTodoInput } from "@domain/entities/Todo";
 import { PrioritySelector } from "@presentation/components/todo/PrioritySelector";
+import { CategorySelector } from "@presentation/components/todo/CategorySelector";
+import { DatePicker } from "@presentation/components/common/DatePicker";
 import {
   Drawer,
   DrawerContent,
@@ -13,15 +15,6 @@ import {
 } from "@presentation/components/ui/drawer";
 import { Input } from "@presentation/components/ui/input";
 import { Button } from "@presentation/components/ui/button";
-import { cn } from "@shared/utils/cn";
-
-function formatDateToInput(date?: Date): string {
-  if (!date) return "";
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
 
 export interface TodoEditModalProps {
   todo: Todo | null;
@@ -62,7 +55,7 @@ function TodoEditForm({ todo, onSubmit, categories }: TodoEditFormProps) {
   const [title, setTitle] = useState(todo.title);
   const [categoryId, setCategoryId] = useState<string | undefined>(todo.categoryId);
   const [priority, setPriority] = useState<Priority>(todo.priority);
-  const [dueDate, setDueDate] = useState(formatDateToInput(todo.dueDate));
+  const [dueDate, setDueDate] = useState<Date | undefined>(todo.dueDate ?? undefined);
 
   const handleSubmit = () => {
     if (!title.trim()) return;
@@ -71,7 +64,7 @@ function TodoEditForm({ todo, onSubmit, categories }: TodoEditFormProps) {
       title: title.trim(),
       categoryId,
       priority,
-      dueDate: dueDate ? new Date(dueDate + "T00:00:00") : null,
+      dueDate: dueDate ?? null,
     });
   };
 
@@ -95,32 +88,11 @@ function TodoEditForm({ todo, onSubmit, categories }: TodoEditFormProps) {
         />
 
         {/* Category */}
-        {categories.length > 0 && (
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-txt-secondary">
-              카테고리
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {categories.map((cat) => (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() =>
-                    setCategoryId(categoryId === cat.id ? undefined : cat.id)
-                  }
-                  className={cn(
-                    "px-3 py-1.5 rounded-full text-sm border transition-colors",
-                    categoryId === cat.id
-                      ? "bg-accent-primary text-white border-accent-primary"
-                      : "bg-bg-surface text-txt-secondary border-border-subtle"
-                  )}
-                >
-                  {cat.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        <CategorySelector
+          categories={categories}
+          value={categoryId}
+          onChange={setCategoryId}
+        />
 
         {/* Priority */}
         <div className="space-y-2">
@@ -132,18 +104,10 @@ function TodoEditForm({ todo, onSubmit, categories }: TodoEditFormProps) {
 
         {/* Due Date */}
         <div className="space-y-2">
-          <label
-            htmlFor="todo-edit-due-date"
-            className="text-sm font-medium text-txt-secondary"
-          >
+          <label className="text-sm font-medium text-txt-secondary">
             마감일
           </label>
-          <Input
-            id="todo-edit-due-date"
-            type="date"
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-          />
+          <DatePicker value={dueDate} onChange={setDueDate} />
         </div>
       </div>
 
