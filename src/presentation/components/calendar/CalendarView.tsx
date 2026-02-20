@@ -82,7 +82,7 @@ export function CalendarView({
   }, [todos]);
 
   return (
-    <div className="space-y-6">
+    <div data-testid="calendar-view" className="space-y-6">
       {/* Month Navigation */}
       <div className="flex items-center justify-between">
         <Button
@@ -94,7 +94,7 @@ export function CalendarView({
         >
           <ChevronLeft className="h-5 w-5" />
         </Button>
-        <h2 className="text-lg font-semibold text-txt-primary">
+        <h2 data-testid="calendar-month-title" className="text-lg font-semibold text-txt-primary">
           {formatKoreanMonth(calendarMonth)}
         </h2>
         <Button

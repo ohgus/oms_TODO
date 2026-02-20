@@ -1,4 +1,5 @@
 import { test, expect } from "./fixtures";
+import { checkTodo } from "./helpers";
 
 test.describe("Data Model Extension", () => {
   test.beforeEach(async ({ page }) => {
@@ -11,13 +12,24 @@ test.describe("Data Model Extension", () => {
       page,
       supabaseClient,
       testTodoTitle,
+      testDataTracker,
     }) => {
       const todoTitle = testTodoTitle("Priority default");
+      const today = new Date();
+      const dueDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
-      // Create a todo via UI
-      await page.getByTestId("todo-input").fill(todoTitle);
-      await page.getByTestId("add-button").click();
-      await expect(page.getByText(todoTitle)).toBeVisible({ timeout: 10000 });
+      // Create a todo via modal
+      await page.getByTestId("add-todo-button").click();
+      await page.getByTestId("todo-title-input").waitFor({ state: "visible" });
+      await page.getByTestId("todo-title-input").fill(todoTitle);
+      await page.locator("#todo-due-date").fill(dueDate);
+      await page.getByTestId("todo-submit-button").click();
+      await page
+        .getByTestId("todo-item")
+        .filter({ hasText: todoTitle })
+        .first()
+        .waitFor({ state: "visible", timeout: 10000 });
+      testDataTracker.trackTodo(todoTitle, todoTitle);
 
       // Query DB immediately after UI confirmation (mutation success = DB write complete)
       const { data } = await supabaseClient.getClient()
@@ -36,58 +48,45 @@ test.describe("Data Model Extension", () => {
   });
 
   test.describe("CRUD Regression", () => {
-    test("should add and delete a todo", async ({
-      page,
-      testTodoTitle,
-    }) => {
-      const todoTitle = testTodoTitle("Data model CRUD");
-
-      // ADD
-      await page.getByTestId("todo-input").fill(todoTitle);
-      await page.getByTestId("add-button").click();
-      await expect(page.getByText(todoTitle)).toBeVisible({ timeout: 10000 });
+    test("should add and delete a todo", async ({ page, createTestTodo }) => {
+      const todoTitle = await createTestTodo();
 
       const todoItem = page.getByTestId("todo-item").filter({ hasText: todoTitle });
       await expect(todoItem).toBeVisible();
 
       // DELETE
-      const deleteButton = todoItem.getByTestId("delete-button");
-      await deleteButton.waitFor({ state: "visible" });
-      await deleteButton.click();
-      await expect(page.getByText(todoTitle)).not.toBeVisible({ timeout: 10000 });
+      await todoItem.getByTestId("delete-button").click();
+      await expect(
+        page.getByTestId("todo-item").filter({ hasText: todoTitle })
+      ).not.toBeVisible({ timeout: 10000 });
     });
   });
 
   test.describe("Filter Regression", () => {
     test("should switch status filter correctly", async ({
       page,
-      testTodoTitle,
-      testDataTracker,
+      createTestTodo,
       supabaseClient,
     }) => {
       void supabaseClient;
 
-      const todoTitle = testTodoTitle("Data model filter");
-
-      // Create a todo
-      await page.getByTestId("todo-input").fill(todoTitle);
-      await page.getByTestId("add-button").click();
-      await expect(page.getByText(todoTitle)).toBeVisible({ timeout: 10000 });
-      testDataTracker.trackTodo(todoTitle, todoTitle);
+      const todoTitle = await createTestTodo();
 
       // Complete the todo
       const todoItem = page.getByTestId("todo-item").filter({ hasText: todoTitle });
-      const checkbox = todoItem.getByTestId("todo-checkbox");
-      await checkbox.click();
-      await expect(checkbox).toBeChecked({ timeout: 10000 });
+      await checkTodo(todoItem, page);
 
       // Active filter: completed todo should not show
       await page.getByTestId("filter-active").click();
-      await expect(page.getByText(todoTitle)).not.toBeVisible({ timeout: 10000 });
+      await expect(
+        page.getByTestId("todo-item").filter({ hasText: todoTitle })
+      ).not.toBeVisible({ timeout: 10000 });
 
       // All filter: todo should show
       await page.getByTestId("filter-all").click();
-      await expect(page.getByText(todoTitle)).toBeVisible({ timeout: 10000 });
+      await expect(
+        page.getByTestId("todo-item").filter({ hasText: todoTitle })
+      ).toBeVisible({ timeout: 10000 });
     });
   });
 });

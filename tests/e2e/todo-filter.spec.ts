@@ -1,4 +1,5 @@
 import { test, expect } from "./fixtures";
+import { checkTodo } from "./helpers";
 
 test.describe("Todo Filtering", () => {
   test.beforeEach(async ({ page }) => {
@@ -7,100 +8,73 @@ test.describe("Todo Filtering", () => {
   });
 
   test.describe("Status Filter", () => {
-    test("should filter by 'All' status", async ({ page, testTodoTitle, testDataTracker, supabaseClient }) => {
-      void supabaseClient;
-
-      const todo1 = testTodoTitle("All filter test 1");
-      const todo2 = testTodoTitle("All filter test 2");
-
-      await page.getByTestId("todo-input").fill(todo1);
-      await page.getByTestId("add-button").click();
-      await expect(page.getByText(todo1)).toBeVisible();
-
-      await page.getByTestId("todo-input").fill(todo2);
-      await page.getByTestId("add-button").click();
-      await expect(page.getByText(todo2)).toBeVisible();
-
-      const todoItem = page.getByTestId("todo-item").filter({ hasText: todo1 });
-      await todoItem.getByTestId("todo-checkbox").click();
-
-      await page.getByTestId("filter-all").click();
-
-      await expect(page.getByText(todo1)).toBeVisible();
-      await expect(page.getByText(todo2)).toBeVisible();
-
-      testDataTracker.trackTodo(todo1, todo1);
-      testDataTracker.trackTodo(todo2, todo2);
-    });
-
-    test("should filter by 'Active' status", async ({ page, testTodoTitle, testDataTracker, supabaseClient }) => {
-      void supabaseClient;
-
-      const activeTodo = testTodoTitle("Active todo");
-      const completedTodo = testTodoTitle("Completed todo");
-
-      await page.getByTestId("todo-input").fill(activeTodo);
-      await page.getByTestId("add-button").click();
-      await expect(page.getByText(activeTodo)).toBeVisible();
-
-      await page.getByTestId("todo-input").fill(completedTodo);
-      await page.getByTestId("add-button").click();
-      await expect(page.getByText(completedTodo)).toBeVisible();
-
-      const todoItem = page.getByTestId("todo-item").filter({ hasText: completedTodo });
-      await todoItem.getByTestId("todo-checkbox").click();
-
-      await page.getByTestId("filter-active").click();
-
-      await expect(page.getByText(activeTodo)).toBeVisible();
-      await expect(page.getByText(completedTodo)).not.toBeVisible();
-
-      testDataTracker.trackTodo(activeTodo, activeTodo);
-      testDataTracker.trackTodo(completedTodo, completedTodo);
-    });
-
-    test("should filter by 'Completed' status", async ({ page, testTodoTitle, testDataTracker, supabaseClient }) => {
-      void supabaseClient;
-
-      const activeTodo = testTodoTitle("Active for completed");
-      const completedTodo = testTodoTitle("Completed for completed");
-
-      await page.getByTestId("todo-input").fill(activeTodo);
-      await page.getByTestId("add-button").click();
-      await expect(page.getByText(activeTodo)).toBeVisible();
-
-      await page.getByTestId("todo-input").fill(completedTodo);
-      await page.getByTestId("add-button").click();
-      await expect(page.getByText(completedTodo)).toBeVisible();
-
-      const todoItem = page.getByTestId("todo-item").filter({ hasText: completedTodo });
-      await todoItem.getByTestId("todo-checkbox").click();
-
-      await page.getByTestId("filter-completed").click();
-
-      await expect(page.getByText(completedTodo)).toBeVisible();
-      await expect(page.getByText(activeTodo)).not.toBeVisible();
-
-      testDataTracker.trackTodo(activeTodo, activeTodo);
-      testDataTracker.trackTodo(completedTodo, completedTodo);
-    });
-
-    test("should show empty message when no matching todos", async ({
+    test("should filter by 'All' status", async ({
       page,
-      testTodoTitle,
-      testDataTracker,
+      createTestTodo,
       supabaseClient,
     }) => {
       void supabaseClient;
 
-      const activeTodo = testTodoTitle("Only active");
-      await page.getByTestId("todo-input").fill(activeTodo);
-      await page.getByTestId("add-button").click();
-      await expect(page.getByText(activeTodo)).toBeVisible();
+      const todo1 = await createTestTodo();
+      const todo2 = await createTestTodo();
+
+      const todoItem = page.getByTestId("todo-item").filter({ hasText: todo1 });
+      await checkTodo(todoItem, page);
+
+      await page.getByTestId("filter-all").click();
+
+      await expect(page.getByTestId("todo-item").filter({ hasText: todo1 })).toBeVisible();
+      await expect(page.getByTestId("todo-item").filter({ hasText: todo2 })).toBeVisible();
+    });
+
+    test("should filter by 'Active' status", async ({
+      page,
+      createTestTodo,
+      supabaseClient,
+    }) => {
+      void supabaseClient;
+
+      const activeTodo = await createTestTodo();
+      const completedTodo = await createTestTodo();
+
+      const todoItem = page.getByTestId("todo-item").filter({ hasText: completedTodo });
+      await checkTodo(todoItem, page);
+
+      await page.getByTestId("filter-active").click();
+
+      await expect(page.getByTestId("todo-item").filter({ hasText: activeTodo })).toBeVisible();
+      await expect(page.getByTestId("todo-item").filter({ hasText: completedTodo })).not.toBeVisible();
+    });
+
+    test("should filter by 'Completed' status", async ({
+      page,
+      createTestTodo,
+      supabaseClient,
+    }) => {
+      void supabaseClient;
+
+      const activeTodo = await createTestTodo();
+      const completedTodo = await createTestTodo();
+
+      const todoItem = page.getByTestId("todo-item").filter({ hasText: completedTodo });
+      await checkTodo(todoItem, page);
 
       await page.getByTestId("filter-completed").click();
 
-      await expect(page.getByText(activeTodo)).not.toBeVisible();
+      await expect(page.getByTestId("todo-item").filter({ hasText: completedTodo })).toBeVisible();
+      await expect(page.getByTestId("todo-item").filter({ hasText: activeTodo })).not.toBeVisible();
+    });
+
+    test("should show empty message when no matching todos", async ({
+      page,
+      createTestTodo,
+      supabaseClient,
+    }) => {
+      void supabaseClient;
+
+      await createTestTodo();
+
+      await page.getByTestId("filter-completed").click();
 
       const emptyMessage = page.getByTestId("empty-message");
       const todoItems = page.getByTestId("todo-item");
@@ -110,8 +84,6 @@ test.describe("Todo Filtering", () => {
         const todoCount = await todoItems.count();
         expect(hasEmptyMessage || todoCount === 0).toBeTruthy();
       }).toPass({ timeout: 10000 });
-
-      testDataTracker.trackTodo(activeTodo, activeTodo);
     });
   });
 
@@ -136,8 +108,7 @@ test.describe("Todo Filtering", () => {
 
     test("should maintain filter state after adding new todo", async ({
       page,
-      testTodoTitle,
-      testDataTracker,
+      createTestTodo,
       supabaseClient,
     }) => {
       void supabaseClient;
@@ -145,14 +116,10 @@ test.describe("Todo Filtering", () => {
       await page.getByTestId("filter-active").click();
       await expect(page.getByTestId("filter-active")).toHaveAttribute("aria-pressed", "true");
 
-      const newTodo = testTodoTitle("New todo while filtered");
-      await page.getByTestId("todo-input").fill(newTodo);
-      await page.getByTestId("add-button").click();
+      const newTodo = await createTestTodo();
 
       await expect(page.getByTestId("filter-active")).toHaveAttribute("aria-pressed", "true");
-      await expect(page.getByText(newTodo)).toBeVisible();
-
-      testDataTracker.trackTodo(newTodo, newTodo);
+      await expect(page.getByTestId("todo-item").filter({ hasText: newTodo })).toBeVisible();
     });
   });
 

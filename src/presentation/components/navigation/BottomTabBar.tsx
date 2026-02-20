@@ -13,7 +13,7 @@ const tabs = [
 
 export function BottomTabBar({ activeTab, onTabChange }: BottomTabBarProps) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-bg-surface border-t border-border-subtle z-50">
+    <nav data-testid="bottom-tab-bar" className="fixed bottom-0 left-0 right-0 bg-bg-surface border-t border-border-subtle z-50">
       <div className="max-w-2xl mx-auto flex">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
@@ -23,6 +23,7 @@ export function BottomTabBar({ activeTab, onTabChange }: BottomTabBarProps) {
             <button
               key={tab.id}
               type="button"
+              data-testid={`tab-${tab.id}`}
               onClick={() => onTabChange(tab.id)}
               aria-current={isActive ? "page" : undefined}
               className={`flex-1 flex flex-col items-center gap-1 py-3 transition-colors ${

@@ -12,7 +12,7 @@ export interface TestFixtures {
   testDataTracker: TestDataTracker;
   supabaseClient: SupabaseTestClient;
   testTodoTitle: (suffix?: string) => string;
-  createTestTodo: (title?: string) => Promise<string>;
+  createTestTodo: (title?: string, options?: { dueDate?: string }) => Promise<string>;
 }
 
 export const test = base.extend<TestFixtures>({
@@ -58,12 +58,41 @@ export const test = base.extend<TestFixtures>({
   },
 
   createTestTodo: async ({ page, testDataTracker, testTodoTitle }, use) => {
-    const createTodo = async (title?: string): Promise<string> => {
+    const createTodo = async (
+      title?: string,
+      options?: { dueDate?: string }
+    ): Promise<string> => {
       const todoTitle = title || testTodoTitle();
 
-      await page.getByTestId("todo-input").fill(todoTitle);
-      await page.getByTestId("add-button").click();
-      await page.getByText(todoTitle).waitFor({ state: "visible" });
+      // Default dueDate to today so the todo appears in the "오늘" tab
+      const today = new Date();
+      const dueDate =
+        options?.dueDate ??
+        `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
+      // Open modal
+      await page.getByTestId("add-todo-button").click();
+      await page.getByTestId("todo-title-input").waitFor({ state: "visible" });
+
+      // Fill title
+      await page.getByTestId("todo-title-input").fill(todoTitle);
+
+      // Fill due date
+      await page.locator("#todo-due-date").fill(dueDate);
+
+      // Submit
+      await page.getByTestId("todo-submit-button").click();
+
+      // Wait for todo to appear in the list (use todo-item to avoid strict mode violation
+      // when the same text appears in multiple sections like calendar's "this week")
+      await page
+        .getByTestId("todo-item")
+        .filter({ hasText: todoTitle })
+        .first()
+        .waitFor({ state: "visible" });
+
+      // Wait for any pending realtime events / query refetches to settle
+      await page.waitForTimeout(500);
 
       // Track by title for pattern-based cleanup
       testDataTracker.trackTodo(todoTitle, todoTitle);

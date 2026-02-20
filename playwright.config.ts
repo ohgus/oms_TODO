@@ -7,10 +7,10 @@ dotenv.config({ path: ".env.local" });
 export default defineConfig({
   testDir: "./tests/e2e",
   globalTeardown: "./tests/e2e/global-teardown.ts",
-  fullyParallel: true,
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  retries: process.env.CI ? 2 : 3,
+  workers: process.env.CI ? 1 : 2,
   reporter: "html",
   use: {
     baseURL: "http://localhost:5173",

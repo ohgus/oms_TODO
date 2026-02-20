@@ -78,6 +78,7 @@ export function TodoAddModal({
             onChange={(e) => setTitle(e.target.value)}
             placeholder="할 일을 입력하세요"
             aria-label="할 일"
+            data-testid="todo-title-input"
           />
 
           {/* Category */}
@@ -138,6 +139,7 @@ export function TodoAddModal({
             onClick={handleSubmit}
             disabled={!title.trim()}
             className="w-full bg-accent-primary text-white hover:bg-accent-primary/90"
+            data-testid="todo-submit-button"
           >
             추가하기
           </Button>

@@ -18,8 +18,7 @@ test.describe("Mobile-First Responsive Design", () => {
     test("should render correctly on mobile viewport", async ({ page }) => {
       await page.screenshot({ path: "tests/e2e/screenshots/mobile-375.png" });
 
-      await expect(page.getByTestId("todo-input")).toBeVisible();
-      await expect(page.getByTestId("add-button")).toBeVisible();
+      await expect(page.getByTestId("add-todo-button")).toBeVisible();
       await expect(page.getByTestId("status-filter")).toBeVisible();
     });
 
@@ -31,7 +30,7 @@ test.describe("Mobile-First Responsive Design", () => {
     });
 
     test("should have touch-friendly button sizes (min 44px)", async ({ page }) => {
-      const addButton = page.getByTestId("add-button");
+      const addButton = page.getByTestId("add-todo-button");
       const addBox = await addButton.boundingBox();
       expect(addBox?.height).toBeGreaterThanOrEqual(44);
       expect(addBox?.width).toBeGreaterThanOrEqual(44);
@@ -43,27 +42,22 @@ test.describe("Mobile-First Responsive Design", () => {
 
     test("should display single-column layout on mobile", async ({
       page,
-      testTodoTitle,
-      testDataTracker,
+      createTestTodo,
       supabaseClient,
     }) => {
       void supabaseClient;
 
-      const todoTitle = testTodoTitle("Mobile layout test");
-      await page.getByTestId("todo-input").fill(todoTitle);
-      await page.getByTestId("add-button").click();
-      await expect(page.getByText(todoTitle)).toBeVisible();
+      const todoTitle = await createTestTodo();
 
       const todoItem = page.getByTestId("todo-item").first();
       const todoBox = await todoItem.boundingBox();
       expect(todoBox?.width).toBeLessThanOrEqual(viewports.mobile.width);
-
-      testDataTracker.trackTodo(todoTitle, todoTitle);
     });
 
     test("should have readable font sizes (min 14px)", async ({ page }) => {
-      const todoInput = page.getByTestId("todo-input");
-      const fontSize = await todoInput.evaluate((el) => {
+      // Check heading font size is readable
+      const heading = page.locator("h1");
+      const fontSize = await heading.evaluate((el) => {
         return window.getComputedStyle(el).fontSize;
       });
       const fontSizeValue = parseInt(fontSize, 10);
@@ -81,8 +75,8 @@ test.describe("Mobile-First Responsive Design", () => {
     test("should render correctly on large mobile viewport", async ({ page }) => {
       await page.screenshot({ path: "tests/e2e/screenshots/mobile-414.png" });
 
-      await expect(page.getByTestId("todo-input")).toBeVisible();
-      await expect(page.getByTestId("add-button")).toBeVisible();
+      await expect(page.getByTestId("add-todo-button")).toBeVisible();
+      await expect(page.getByTestId("status-filter")).toBeVisible();
     });
 
     test("should have no horizontal scroll on large mobile", async ({ page }) => {
@@ -103,14 +97,8 @@ test.describe("Mobile-First Responsive Design", () => {
     test("should render correctly on tablet viewport", async ({ page }) => {
       await page.screenshot({ path: "tests/e2e/screenshots/tablet-768.png" });
 
-      await expect(page.getByTestId("todo-input")).toBeVisible();
-      await expect(page.getByTestId("add-button")).toBeVisible();
-    });
-
-    test("should show expanded button text on tablet", async ({ page }) => {
-      const addButton = page.getByTestId("add-button");
-      const buttonText = await addButton.innerText();
-      expect(buttonText).toContain("Add");
+      await expect(page.getByTestId("add-todo-button")).toBeVisible();
+      await expect(page.getByTestId("status-filter")).toBeVisible();
     });
   });
 
@@ -124,12 +112,12 @@ test.describe("Mobile-First Responsive Design", () => {
     test("should render correctly on desktop viewport", async ({ page }) => {
       await page.screenshot({ path: "tests/e2e/screenshots/desktop-1280.png" });
 
-      await expect(page.getByTestId("todo-input")).toBeVisible();
-      await expect(page.getByTestId("add-button")).toBeVisible();
+      await expect(page.getByTestId("add-todo-button")).toBeVisible();
+      await expect(page.getByTestId("status-filter")).toBeVisible();
     });
 
     test("should center content with max-width on desktop", async ({ page }) => {
-      const container = page.locator(".max-w-2xl");
+      const container = page.locator(".max-w-2xl").first();
       const containerBox = await container.boundingBox();
 
       expect(containerBox?.width).toBeLessThan(viewports.desktop.width);
@@ -139,8 +127,7 @@ test.describe("Mobile-First Responsive Design", () => {
   test.describe("Responsive Interactions", () => {
     test("should work correctly across viewport changes", async ({
       page,
-      testTodoTitle,
-      testDataTracker,
+      createTestTodo,
       supabaseClient,
     }) => {
       void supabaseClient;
@@ -148,18 +135,13 @@ test.describe("Mobile-First Responsive Design", () => {
       await page.setViewportSize(viewports.mobile);
       await page.goto("/");
 
-      const todoTitle = testTodoTitle("Responsive test");
-      await page.getByTestId("todo-input").fill(todoTitle);
-      await page.getByTestId("add-button").click();
-      await expect(page.getByText(todoTitle)).toBeVisible();
+      const todoTitle = await createTestTodo();
 
       await page.setViewportSize(viewports.desktop);
       await expect(page.getByText(todoTitle)).toBeVisible();
 
       await page.setViewportSize(viewports.mobile);
       await expect(page.getByText(todoTitle)).toBeVisible();
-
-      testDataTracker.trackTodo(todoTitle, todoTitle);
     });
 
     test("should maintain functionality on all viewports", async ({ page }) => {
@@ -167,8 +149,7 @@ test.describe("Mobile-First Responsive Design", () => {
         await page.setViewportSize(viewport);
         await page.goto("/");
 
-        await expect(page.getByTestId("todo-input")).toBeVisible();
-        await expect(page.getByTestId("add-button")).toBeEnabled();
+        await expect(page.getByTestId("add-todo-button")).toBeVisible();
         await expect(page.getByTestId("status-filter")).toBeVisible();
 
         await page.screenshot({
@@ -181,8 +162,7 @@ test.describe("Mobile-First Responsive Design", () => {
   test.describe("Touch Target Verification", () => {
     test("should have adequate touch targets for all interactive elements", async ({
       page,
-      testTodoTitle,
-      testDataTracker,
+      createTestTodo,
       supabaseClient,
     }) => {
       void supabaseClient;
@@ -190,10 +170,7 @@ test.describe("Mobile-First Responsive Design", () => {
       await page.setViewportSize(viewports.mobile);
       await page.goto("/");
 
-      const todoTitle = testTodoTitle("Touch target test");
-      await page.getByTestId("todo-input").fill(todoTitle);
-      await page.getByTestId("add-button").click();
-      await expect(page.getByText(todoTitle)).toBeVisible();
+      const todoTitle = await createTestTodo();
 
       const checkbox = page.getByTestId("checkbox-wrapper").first();
       const checkboxBox = await checkbox.boundingBox();
@@ -209,8 +186,6 @@ test.describe("Mobile-First Responsive Design", () => {
       const editBox = await editButton.boundingBox();
       expect(editBox?.height).toBeGreaterThanOrEqual(44);
       expect(editBox?.width).toBeGreaterThanOrEqual(44);
-
-      testDataTracker.trackTodo(todoTitle, todoTitle);
     });
   });
 });

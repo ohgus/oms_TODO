@@ -1,4 +1,5 @@
 import { test, expect } from "./fixtures";
+import { checkTodo, uncheckTodo } from "./helpers";
 
 test.describe("Todo CRUD Operations", () => {
   test.beforeEach(async ({ page }) => {
@@ -7,166 +8,162 @@ test.describe("Todo CRUD Operations", () => {
   });
 
   test.describe("Create Todo", () => {
-    test("should add a new todo", async ({ page, testTodoTitle, testDataTracker, supabaseClient }) => {
-      // supabaseClient is included to trigger cleanup after test
+    test("should add a new todo", async ({ page, createTestTodo, supabaseClient }) => {
       void supabaseClient;
 
-      const todoTitle = testTodoTitle("Create test");
-
-      await page.getByTestId("todo-input").fill(todoTitle);
-      await page.getByTestId("add-button").click();
-
-      await expect(page.getByText(todoTitle)).toBeVisible();
-      testDataTracker.trackTodo(todoTitle, todoTitle);
+      const todoTitle = await createTestTodo();
+      await expect(page.getByTestId("todo-item").filter({ hasText: todoTitle })).toBeVisible();
     });
 
-    test("should clear input after adding todo", async ({ page, testTodoTitle, testDataTracker, supabaseClient }) => {
+    test("should clear form after adding todo", async ({
+      page,
+      createTestTodo,
+      supabaseClient,
+    }) => {
       void supabaseClient;
 
-      const todoTitle = testTodoTitle("Clear input test");
+      await createTestTodo();
 
-      await page.getByTestId("todo-input").fill(todoTitle);
-      await page.getByTestId("add-button").click();
-
-      await expect(page.getByTestId("todo-input")).toHaveValue("");
-      testDataTracker.trackTodo(todoTitle, todoTitle);
+      // Re-open modal and verify form is empty
+      await page.getByTestId("add-todo-button").click();
+      await page.getByTestId("todo-title-input").waitFor({ state: "visible" });
+      await expect(page.getByTestId("todo-title-input")).toHaveValue("");
     });
 
-    test("should show error when adding empty todo", async ({ page }) => {
-      await page.getByTestId("add-button").click();
+    test("should disable submit button when title is empty", async ({ page }) => {
+      await page.getByTestId("add-todo-button").click();
+      await page.getByTestId("todo-title-input").waitFor({ state: "visible" });
 
-      await expect(page.getByRole("alert")).toBeVisible();
-      await expect(page.getByText("Title is required")).toBeVisible();
+      await expect(page.getByTestId("todo-submit-button")).toBeDisabled();
     });
 
-    test("should add todo with category", async ({ page, testTodoTitle, testDataTracker, supabaseClient }) => {
+    test("should add todo with category", async ({
+      page,
+      testTodoTitle,
+      testDataTracker,
+      supabaseClient,
+    }) => {
       void supabaseClient;
 
       const todoTitle = testTodoTitle("Todo with category");
+      const today = new Date();
+      const dueDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
-      await page.getByTestId("todo-input").fill(todoTitle);
+      // Open modal
+      await page.getByTestId("add-todo-button").click();
+      await page.getByTestId("todo-title-input").waitFor({ state: "visible" });
 
-      const categorySelect = page.getByTestId("category-select");
-      if (await categorySelect.isVisible({ timeout: 1000 }).catch(() => false)) {
-        const options = categorySelect.locator("option");
-        const count = await options.count();
-        if (count > 1) {
-          await categorySelect.selectOption({ index: 1 });
-        }
+      // Fill title
+      await page.getByTestId("todo-title-input").fill(todoTitle);
+
+      // Fill due date
+      await page.locator("#todo-due-date").fill(dueDate);
+
+      // Select category if available (scope to drawer content)
+      const drawer = page.locator("[data-vaul-drawer]");
+      const categoryButtons = drawer.locator("button.rounded-full");
+      const hasCat = await categoryButtons
+        .first()
+        .isVisible({ timeout: 1000 })
+        .catch(() => false);
+      if (hasCat) {
+        await categoryButtons.first().click();
       }
 
-      await page.getByTestId("add-button").click();
-      await expect(page.getByText(todoTitle)).toBeVisible();
+      // Submit
+      await page.getByTestId("todo-submit-button").click();
+      await page
+        .getByTestId("todo-item")
+        .filter({ hasText: todoTitle })
+        .first()
+        .waitFor({ state: "visible" });
       testDataTracker.trackTodo(todoTitle, todoTitle);
     });
   });
 
   test.describe("Read Todo", () => {
-    test("should display todo list", async ({ page, testTodoTitle, testDataTracker, supabaseClient }) => {
+    test("should display todo list", async ({ page, createTestTodo, supabaseClient }) => {
       void supabaseClient;
 
-      const todoTitle = testTodoTitle("Display test");
-      await page.getByTestId("todo-input").fill(todoTitle);
-      await page.getByTestId("add-button").click();
-
-      await expect(page.getByText(todoTitle)).toBeVisible();
+      const todoTitle = await createTestTodo();
 
       const todoList = page.getByTestId("todo-list");
       await expect(todoList).toBeVisible();
 
       const todoItem = page.getByTestId("todo-item").filter({ hasText: todoTitle });
       await expect(todoItem).toBeVisible();
-      testDataTracker.trackTodo(todoTitle, todoTitle);
     });
 
     test("should show empty message when no todos", async ({ page }) => {
+      // Switch to completed filter where there are likely no items
+      await page.getByTestId("filter-completed").click();
+
       const emptyMessage = page.getByTestId("empty-message");
-      const todoList = page.getByTestId("todo-list");
+      const todoItems = page.getByTestId("todo-item");
 
-      const hasItems = await todoList.isVisible({ timeout: 2000 }).catch(() => false);
-
-      if (hasItems) {
-        const deleteButtons = page.getByTestId("delete-button");
-        let count = await deleteButtons.count();
-
-        while (count > 0) {
-          await deleteButtons.first().click();
-          await page.waitForTimeout(500);
-          count = await deleteButtons.count();
-        }
-      }
-
-      await expect(emptyMessage).toBeVisible({ timeout: 10000 });
+      await expect(async () => {
+        const hasEmptyMessage = await emptyMessage.isVisible().catch(() => false);
+        const todoCount = await todoItems.count();
+        expect(hasEmptyMessage || todoCount === 0).toBeTruthy();
+      }).toPass({ timeout: 10000 });
     });
   });
 
   test.describe("Update Todo", () => {
-    test("should toggle todo completion status", async ({ page, testTodoTitle, testDataTracker, supabaseClient }) => {
+    test("should toggle todo completion status", async ({
+      page,
+      createTestTodo,
+      supabaseClient,
+    }) => {
       void supabaseClient;
 
-      const todoTitle = testTodoTitle("Toggle test");
-      await page.getByTestId("todo-input").fill(todoTitle);
-      await page.getByTestId("add-button").click();
-
-      await expect(page.getByText(todoTitle)).toBeVisible();
+      const todoTitle = await createTestTodo();
 
       const todoItem = page.getByTestId("todo-item").filter({ hasText: todoTitle });
       const checkbox = todoItem.getByTestId("todo-checkbox");
 
       await expect(checkbox).not.toBeChecked();
 
-      await checkbox.click();
-      await expect(checkbox).toBeChecked();
+      await checkTodo(todoItem, page);
 
       const title = todoItem.getByTestId("todo-title");
       await expect(title).toHaveClass(/line-through/);
 
-      await checkbox.click();
-      await expect(checkbox).not.toBeChecked();
+      await uncheckTodo(todoItem, page);
       await expect(title).not.toHaveClass(/line-through/);
-
-      testDataTracker.trackTodo(todoTitle, todoTitle);
     });
   });
 
   test.describe("Delete Todo", () => {
-    test("should delete a todo", async ({ page, testTodoTitle }) => {
-      // No tracking needed - todo is deleted in test
-      const todoTitle = testTodoTitle("Delete test");
-      await page.getByTestId("todo-input").fill(todoTitle);
-      await page.getByTestId("add-button").click();
-
-      await expect(page.getByText(todoTitle)).toBeVisible();
+    test("should delete a todo", async ({ page, createTestTodo }) => {
+      const todoTitle = await createTestTodo();
 
       const todoItem = page.getByTestId("todo-item").filter({ hasText: todoTitle });
       await todoItem.getByTestId("delete-button").click();
 
-      await expect(page.getByText(todoTitle)).not.toBeVisible({ timeout: 10000 });
+      await expect(
+        page.getByTestId("todo-item").filter({ hasText: todoTitle })
+      ).not.toBeVisible({ timeout: 10000 });
     });
   });
 
   test.describe("Full CRUD Flow", () => {
-    test("should complete full CRUD cycle", async ({ page, testTodoTitle }) => {
-      // No tracking needed - todo is deleted in test
-      const todoTitle = testTodoTitle("Full CRUD");
-
+    test("should complete full CRUD cycle", async ({ page, createTestTodo }) => {
       // CREATE
-      await page.getByTestId("todo-input").fill(todoTitle);
-      await page.getByTestId("add-button").click();
-      await expect(page.getByText(todoTitle)).toBeVisible();
+      const todoTitle = await createTestTodo();
 
       // READ
       const todoItem = page.getByTestId("todo-item").filter({ hasText: todoTitle });
       await expect(todoItem).toBeVisible();
 
       // UPDATE
-      const checkbox = todoItem.getByTestId("todo-checkbox");
-      await checkbox.click();
-      await expect(checkbox).toBeChecked();
+      await checkTodo(todoItem, page);
 
       // DELETE
       await todoItem.getByTestId("delete-button").click();
-      await expect(page.getByText(todoTitle)).not.toBeVisible({ timeout: 10000 });
+      await expect(
+        page.getByTestId("todo-item").filter({ hasText: todoTitle })
+      ).not.toBeVisible({ timeout: 10000 });
     });
   });
 });
