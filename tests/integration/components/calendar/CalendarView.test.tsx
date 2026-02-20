@@ -74,7 +74,7 @@ describe("CalendarView", () => {
     container = new DIContainer(createMockTodoRepository(), createMockCategoryRepository());
     useUIStore.setState({
       calendarMonth: new Date(today.getFullYear(), today.getMonth(), 1),
-      selectedCalendarDate: null,
+      selectedCalendarDate: today,
     });
     vi.clearAllMocks();
   });
@@ -138,5 +138,98 @@ describe("CalendarView", () => {
     });
 
     expect(screen.getByText("이번 주 TODO")).toBeInTheDocument();
+  });
+
+  describe("선택 날짜 섹션", () => {
+    it("캘린더 뷰 진입 시 선택 날짜 섹션이 표시되어야 한다", () => {
+      useUIStore.setState({
+        calendarMonth: new Date(2026, 1, 1),
+        selectedCalendarDate: new Date(2026, 1, 20),
+      });
+
+      render(<CalendarView container={container} categories={mockCategories} onToggleComplete={vi.fn()} onDelete={vi.fn()} onEdit={vi.fn()} />, {
+        wrapper: createWrapper(),
+      });
+
+      const selectedSection = screen.getByLabelText("선택 날짜 TODO");
+      expect(selectedSection).toBeInTheDocument();
+    });
+  });
+
+  describe("캘린더 그리드 카드 스타일", () => {
+    it("캘린더 그리드가 카드 스타일 래퍼로 감싸져 있어야 한다", () => {
+      render(<CalendarView container={container} categories={mockCategories} onToggleComplete={vi.fn()} onDelete={vi.fn()} onEdit={vi.fn()} />, {
+        wrapper: createWrapper(),
+      });
+
+      const calendarGrid = screen.getByTestId("calendar-grid-card");
+      expect(calendarGrid).toBeInTheDocument();
+      expect(calendarGrid.className).toContain("bg-bg-surface");
+      expect(calendarGrid.className).toContain("rounded-xl");
+      expect(calendarGrid.className).toContain("shadow");
+    });
+  });
+
+  describe("요일/날짜 색상", () => {
+    it("일요일 헤더는 빨간색(text-accent-red)이어야 한다", () => {
+      render(<CalendarView container={container} categories={mockCategories} onToggleComplete={vi.fn()} onDelete={vi.fn()} onEdit={vi.fn()} />, {
+        wrapper: createWrapper(),
+      });
+
+      const sunHeader = screen.getByText("일");
+      expect(sunHeader.className).toContain("text-accent-red");
+    });
+
+    it("토요일 헤더는 초록색(text-accent-primary)이어야 한다", () => {
+      render(<CalendarView container={container} categories={mockCategories} onToggleComplete={vi.fn()} onDelete={vi.fn()} onEdit={vi.fn()} />, {
+        wrapper: createWrapper(),
+      });
+
+      const satHeader = screen.getByText("토");
+      expect(satHeader.className).toContain("text-accent-primary");
+    });
+
+    it("평일 헤더는 text-txt-tertiary이어야 한다", () => {
+      render(<CalendarView container={container} categories={mockCategories} onToggleComplete={vi.fn()} onDelete={vi.fn()} onEdit={vi.fn()} />, {
+        wrapper: createWrapper(),
+      });
+
+      const monHeader = screen.getByText("월");
+      expect(monHeader.className).toContain("text-txt-tertiary");
+    });
+
+    it("일요일 날짜는 빨간색이어야 한다", () => {
+      // 2026년 2월 1일은 일요일
+      useUIStore.setState({
+        calendarMonth: new Date(2026, 1, 1),
+        selectedCalendarDate: new Date(2026, 1, 10),
+      });
+
+      render(<CalendarView container={container} categories={mockCategories} onToggleComplete={vi.fn()} onDelete={vi.fn()} onEdit={vi.fn()} />, {
+        wrapper: createWrapper(),
+      });
+
+      const dayButtons = screen.getAllByRole("button").filter((btn) => btn.textContent === "1");
+      const feb1 = dayButtons[0]; // 2월 1일 (일요일)
+      const feb1DateSpan = feb1.querySelector("span")!;
+      expect(feb1DateSpan.className).toContain("text-accent-red");
+    });
+
+    it("토요일 날짜는 초록색이어야 한다", () => {
+      // 2026년 2월 7일은 토요일
+      useUIStore.setState({
+        calendarMonth: new Date(2026, 1, 1),
+        selectedCalendarDate: new Date(2026, 1, 10),
+      });
+
+      render(<CalendarView container={container} categories={mockCategories} onToggleComplete={vi.fn()} onDelete={vi.fn()} onEdit={vi.fn()} />, {
+        wrapper: createWrapper(),
+      });
+
+      const dayButtons = screen.getAllByRole("button").filter((btn) => btn.textContent === "7");
+      const feb7 = dayButtons[0]; // 2월 7일 (토요일)
+      const feb7DateSpan = feb7.querySelector("span")!;
+      expect(feb7DateSpan.className).toContain("text-accent-primary");
+    });
   });
 });

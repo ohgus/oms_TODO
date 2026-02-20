@@ -17,11 +17,26 @@ import { formatKoreanDate, formatKoreanMonth } from "@shared/utils/date";
 
 const WEEKDAY_HEADERS = ["일", "월", "화", "수", "목", "금", "토"];
 
-function getDayCellStyle(day: CalendarDay, isSelected: boolean): string {
-  if (day.isToday) return "bg-accent-primary text-white font-bold rounded-lg";
-  if (isSelected) return "bg-accent-light text-accent-primary font-semibold rounded-lg";
-  if (day.isCurrentMonth) return "text-txt-primary";
+const SUNDAY = 0;
+const SATURDAY = 6;
+
+function getWeekdayHeaderColor(index: number): string {
+  if (index === SUNDAY) return "text-accent-red";
+  if (index === SATURDAY) return "text-accent-primary";
   return "text-txt-tertiary";
+}
+
+function getDayTextColor(dayOfWeek: number, isCurrentMonth: boolean): string {
+  if (!isCurrentMonth) return "text-txt-tertiary";
+  if (dayOfWeek === SUNDAY) return "text-accent-red";
+  if (dayOfWeek === SATURDAY) return "text-accent-primary";
+  return "text-txt-primary";
+}
+
+function getDayCellStyle(day: CalendarDay, isSelected: boolean): string {
+  if (day.isToday) return "bg-accent-primary text-white font-bold";
+  if (isSelected) return "bg-accent-light text-accent-primary font-semibold";
+  return getDayTextColor(day.date.getDay(), day.isCurrentMonth);
 }
 
 interface CalendarViewProps {
@@ -108,41 +123,52 @@ export function CalendarView({
         </Button>
       </div>
 
-      {/* Weekday Headers */}
-      <div className="grid grid-cols-7 text-center">
-        {WEEKDAY_HEADERS.map((day) => (
-          <div key={day} className="py-2 text-xs font-medium text-txt-tertiary">
-            {day}
-          </div>
-        ))}
-      </div>
+      {/* Calendar Grid Card */}
+      <div
+        data-testid="calendar-grid-card"
+        className="bg-bg-surface rounded-xl shadow-sm p-3 space-y-1"
+      >
+        {/* Weekday Headers */}
+        <div className="grid grid-cols-7 text-center">
+          {WEEKDAY_HEADERS.map((day, index) => (
+            <div key={day} className={`py-2 text-xs font-medium ${getWeekdayHeaderColor(index)}`}>
+              {day}
+            </div>
+          ))}
+        </div>
 
-      {/* Calendar Grid */}
-      <div className="grid grid-cols-7">
-        {calendarDays.flat().map((day) => {
-          const dateStr = toDateString(day.date);
-          const isSelected =
-            selectedCalendarDate && toDateString(selectedCalendarDate) === dateStr;
+        {/* Calendar Grid */}
+        <div className="grid grid-cols-7">
+          {calendarDays.flat().map((day) => {
+            const dateStr = toDateString(day.date);
+            const isSelected =
+              selectedCalendarDate && toDateString(selectedCalendarDate) === dateStr;
+            const isHighlighted = day.isToday || isSelected;
 
-          return (
-            <button
-              key={dateStr}
-              type="button"
-              onClick={() => setSelectedCalendarDate(day.date)}
-              aria-label={formatKoreanDate(day.date)}
-              className={`relative flex flex-col items-center justify-center py-2 text-sm transition-colors ${getDayCellStyle(day, !!isSelected)}`}
-            >
-              {day.date.getDate()}
-              {day.hasTodos && (
+            return (
+              <button
+                key={dateStr}
+                type="button"
+                onClick={() => setSelectedCalendarDate(day.date)}
+                aria-label={formatKoreanDate(day.date)}
+                className="flex flex-col items-center gap-0.5 py-0.5 text-sm transition-colors"
+              >
                 <span
-                  className={`absolute bottom-1 h-1 w-1 rounded-full ${
-                    day.isToday ? "bg-white" : "bg-accent-primary"
+                  className={`flex items-center justify-center w-9 h-9 ${getDayCellStyle(day, !!isSelected)} ${isHighlighted ? "rounded-full" : ""}`}
+                >
+                  {day.date.getDate()}
+                </span>
+                <span
+                  className={`h-1.5 w-1.5 rounded-full ${
+                    day.hasTodos
+                      ? day.isToday ? "bg-accent-primary" : "bg-accent-primary"
+                      : "bg-transparent"
                   }`}
                 />
-              )}
-            </button>
-          );
-        })}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Selected Date Section */}
