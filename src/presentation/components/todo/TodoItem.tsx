@@ -3,6 +3,8 @@ import type { Todo } from "@domain/entities/Todo";
 import { Button } from "@presentation/components/ui/button";
 import { Checkbox } from "@presentation/components/ui/checkbox";
 import { Badge } from "@presentation/components/ui/badge";
+import { PriorityStars } from "@presentation/components/todo/PriorityStars";
+import { DateBadge } from "@presentation/components/common/DateBadge";
 import { cn } from "@shared/utils/cn";
 
 export interface TodoItemProps {
@@ -44,15 +46,15 @@ export function TodoItem({
           >
             {todo.title}
           </p>
-          {todo.description && (
-            <p className="text-xs text-txt-secondary truncate mt-0.5">
-              {todo.description}
-            </p>
+          {todo.dueDate && (
+            <DateBadge date={todo.dueDate} className="mt-0.5" />
           )}
         </div>
       </div>
 
       <div className="flex items-center gap-2 pl-11 sm:pl-0">
+        <PriorityStars level={todo.priority} />
+
         {categoryName && (
           <Badge
             variant="secondary"

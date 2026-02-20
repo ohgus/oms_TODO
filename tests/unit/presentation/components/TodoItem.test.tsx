@@ -31,24 +31,6 @@ describe("TodoItem", () => {
       expect(screen.getByText("Buy groceries")).toBeInTheDocument();
     });
 
-    it("should render todo description when provided", () => {
-      const todo = createMockTodo({
-        title: "Test",
-        description: "This is a description",
-      });
-
-      render(
-        <TodoItem
-          todo={todo}
-          onToggleComplete={vi.fn()}
-          onDelete={vi.fn()}
-          onEdit={vi.fn()}
-        />
-      );
-
-      expect(screen.getByText("This is a description")).toBeInTheDocument();
-    });
-
     it("should render checkbox as unchecked for incomplete todo", () => {
       const todo = createMockTodo({ completed: false });
 
@@ -204,6 +186,70 @@ describe("TodoItem", () => {
 
       expect(onEdit).toHaveBeenCalledTimes(1);
       expect(onEdit).toHaveBeenCalledWith(todo);
+    });
+  });
+
+  describe("Priority & DueDate Display", () => {
+    it("should render PriorityStars with correct level", () => {
+      const todo = createMockTodo({ priority: 3 });
+
+      render(
+        <TodoItem
+          todo={todo}
+          onToggleComplete={vi.fn()}
+          onDelete={vi.fn()}
+          onEdit={vi.fn()}
+        />
+      );
+
+      expect(screen.getByLabelText("중요도 3단계")).toBeInTheDocument();
+    });
+
+    it("should render PriorityStars for priority=1", () => {
+      const todo = createMockTodo({ priority: 1 });
+
+      render(
+        <TodoItem
+          todo={todo}
+          onToggleComplete={vi.fn()}
+          onDelete={vi.fn()}
+          onEdit={vi.fn()}
+        />
+      );
+
+      expect(screen.getByLabelText("중요도 1단계")).toBeInTheDocument();
+    });
+
+    it("should render DateBadge when dueDate is provided", () => {
+      const todo = createMockTodo({
+        dueDate: new Date("2026-02-19T00:00:00"),
+      });
+
+      render(
+        <TodoItem
+          todo={todo}
+          onToggleComplete={vi.fn()}
+          onDelete={vi.fn()}
+          onEdit={vi.fn()}
+        />
+      );
+
+      expect(screen.getByText("2월 19일")).toBeInTheDocument();
+    });
+
+    it("should NOT render DateBadge when dueDate is undefined", () => {
+      const todo = createMockTodo({ dueDate: undefined });
+
+      render(
+        <TodoItem
+          todo={todo}
+          onToggleComplete={vi.fn()}
+          onDelete={vi.fn()}
+          onEdit={vi.fn()}
+        />
+      );
+
+      expect(screen.queryByTestId("calendar-icon")).not.toBeInTheDocument();
     });
   });
 
