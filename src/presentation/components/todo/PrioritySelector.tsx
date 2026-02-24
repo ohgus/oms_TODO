@@ -1,5 +1,7 @@
 import { Star } from "lucide-react";
+
 import type { Priority } from "@domain/entities/Todo";
+
 import { cn } from "@shared/utils/cn";
 
 export interface PrioritySelectorProps {

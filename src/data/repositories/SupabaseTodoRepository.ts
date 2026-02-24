@@ -1,7 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+
 import type { Todo } from "@domain/entities/Todo";
 import { DEFAULT_PRIORITY } from "@domain/entities/Todo";
 import type { ITodoRepository, TodoFilter } from "@domain/repositories/ITodoRepository";
+
 import { toDateString } from "@shared/utils/calendar";
 
 interface TodoRow {
@@ -23,7 +25,9 @@ function mapRowToTodo(row: TodoRow): Todo {
     description: row.description ?? undefined,
     categoryId: row.category_id ?? undefined,
     completed: row.completed,
-    priority: (row.priority >= 1 && row.priority <= 3 ? row.priority : DEFAULT_PRIORITY) as Todo["priority"],
+    priority: (row.priority >= 1 && row.priority <= 3
+      ? row.priority
+      : DEFAULT_PRIORITY) as Todo["priority"],
     dueDate: row.due_date ? new Date(row.due_date + "T00:00:00") : undefined,
     createdAt: new Date(row.created_at),
     updatedAt: new Date(row.updated_at),
@@ -66,11 +70,7 @@ export class SupabaseTodoRepository implements ITodoRepository {
   }
 
   async findById(id: string): Promise<Todo | null> {
-    const { data, error } = await this.client
-      .from(this.tableName)
-      .select()
-      .eq("id", id)
-      .single();
+    const { data, error } = await this.client.from(this.tableName).select().eq("id", id).single();
 
     if (error) {
       if (error.code === "PGRST116") {

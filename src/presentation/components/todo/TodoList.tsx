@@ -1,5 +1,6 @@
-import type { Todo } from "@domain/entities/Todo";
 import type { Category } from "@domain/entities/Category";
+import type { Todo } from "@domain/entities/Todo";
+
 import { TodoItem } from "./TodoItem";
 
 export interface TodoListProps {
@@ -46,7 +47,10 @@ export function TodoList({
 
   if (todos.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center" data-testid="empty-message">
+      <div
+        className="flex flex-col items-center justify-center py-12 text-center"
+        data-testid="empty-message"
+      >
         <p className="text-txt-secondary">{emptyMessage}</p>
       </div>
     );

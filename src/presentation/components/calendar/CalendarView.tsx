@@ -1,17 +1,22 @@
 import { useMemo } from "react";
+
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { DIContainer } from "@infrastructure/di/container";
-import type { Todo } from "@domain/entities/Todo";
+
 import type { Category } from "@domain/entities/Category";
-import { useUIStore } from "@presentation/stores/uiStore";
-import { useTodosByMonth } from "@presentation/hooks/useTodosByMonth";
+import type { Todo } from "@domain/entities/Todo";
+
 import { TodoList } from "@presentation/components/todo/TodoList";
 import { Button } from "@presentation/components/ui/button";
+import { useTodosByMonth } from "@presentation/hooks/useTodosByMonth";
+import { useUIStore } from "@presentation/stores/uiStore";
+
+import type { DIContainer } from "@infrastructure/di/container";
+
 import {
-  generateCalendarDays,
-  toDateString,
-  getWeekRange,
   type CalendarDay,
+  generateCalendarDays,
+  getWeekRange,
+  toDateString,
 } from "@shared/utils/calendar";
 import { formatKoreanDate, formatKoreanMonth } from "@shared/utils/date";
 
@@ -72,12 +77,7 @@ export function CalendarView({
   }, [todos]);
 
   const calendarDays = useMemo(
-    () =>
-      generateCalendarDays(
-        calendarMonth.getFullYear(),
-        calendarMonth.getMonth(),
-        todoDateSet
-      ),
+    () => generateCalendarDays(calendarMonth.getFullYear(), calendarMonth.getMonth(), todoDateSet),
     [calendarMonth, todoDateSet]
   );
 
@@ -161,7 +161,9 @@ export function CalendarView({
                 <span
                   className={`h-1.5 w-1.5 rounded-full ${
                     day.hasTodos
-                      ? day.isToday ? "bg-accent-primary" : "bg-accent-primary"
+                      ? day.isToday
+                        ? "bg-accent-primary"
+                        : "bg-accent-primary"
                       : "bg-transparent"
                   }`}
                 />

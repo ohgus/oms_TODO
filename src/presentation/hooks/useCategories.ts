@@ -1,4 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
 import type { Category, CreateCategoryInput } from "@domain/entities/Category";
 import { createCategory } from "@domain/entities/Category";
 import type { ICategoryRepository } from "@domain/repositories/ICategoryRepository";

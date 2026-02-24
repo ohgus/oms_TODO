@@ -1,11 +1,13 @@
-import type { ITodoRepository } from "@domain/repositories/ITodoRepository";
 import type { ICategoryRepository } from "@domain/repositories/ICategoryRepository";
-import { SupabaseTodoRepository } from "@data/repositories/SupabaseTodoRepository";
-import { SupabaseCategoryRepository } from "@data/repositories/SupabaseCategoryRepository";
-import { GetTodosUseCase } from "@domain/usecases/GetTodos";
+import type { ITodoRepository } from "@domain/repositories/ITodoRepository";
 import { CreateTodoUseCase } from "@domain/usecases/CreateTodo";
-import { UpdateTodoUseCase } from "@domain/usecases/UpdateTodo";
 import { DeleteTodoUseCase } from "@domain/usecases/DeleteTodo";
+import { GetTodosUseCase } from "@domain/usecases/GetTodos";
+import { UpdateTodoUseCase } from "@domain/usecases/UpdateTodo";
+
+import { SupabaseCategoryRepository } from "@data/repositories/SupabaseCategoryRepository";
+import { SupabaseTodoRepository } from "@data/repositories/SupabaseTodoRepository";
+
 import { supabase } from "@infrastructure/supabase/client";
 
 export class DIContainer {

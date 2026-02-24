@@ -1,5 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { Todo, CreateTodoInput, UpdateTodoInput } from "@domain/entities/Todo";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+import type { CreateTodoInput, Todo, UpdateTodoInput } from "@domain/entities/Todo";
 import { createTodo, updateTodo as updateTodoEntity } from "@domain/entities/Todo";
 import type { ITodoRepository, TodoFilter } from "@domain/repositories/ITodoRepository";
 

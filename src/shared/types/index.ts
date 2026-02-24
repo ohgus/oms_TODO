@@ -1,7 +1,5 @@
 // Result type for error handling
-export type Result<T, E = Error> =
-  | { success: true; data: T }
-  | { success: false; error: E };
+export type Result<T, E = Error> = { success: true; data: T } | { success: false; error: E };
 
 // Common filter types
 export interface PaginationParams {
