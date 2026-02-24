@@ -1,4 +1,5 @@
-import { CheckSquare, Calendar } from "lucide-react";
+import { Calendar, CheckSquare } from "lucide-react";
+
 import type { ActiveTab } from "@presentation/stores/uiStore";
 
 interface BottomTabBarProps {
@@ -13,7 +14,10 @@ const tabs = [
 
 export function BottomTabBar({ activeTab, onTabChange }: BottomTabBarProps) {
   return (
-    <nav data-testid="bottom-tab-bar" className="fixed bottom-0 left-0 right-0 bg-bg-surface border-t border-border-subtle z-50">
+    <nav
+      data-testid="bottom-tab-bar"
+      className="fixed bottom-0 left-0 right-0 bg-bg-surface border-t border-border-subtle z-50"
+    >
       <div className="max-w-2xl mx-auto flex">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;

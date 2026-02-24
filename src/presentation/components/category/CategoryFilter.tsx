@@ -1,4 +1,5 @@
 import type { Category } from "@domain/entities/Category";
+
 import { Button } from "@presentation/components/ui/button";
 
 export interface CategoryFilterProps {
@@ -7,11 +8,7 @@ export interface CategoryFilterProps {
   onSelect: (categoryId: string | undefined) => void;
 }
 
-export function CategoryFilter({
-  categories,
-  selectedCategoryId,
-  onSelect,
-}: CategoryFilterProps) {
+export function CategoryFilter({ categories, selectedCategoryId, onSelect }: CategoryFilterProps) {
   const isAllSelected = selectedCategoryId === undefined;
 
   return (

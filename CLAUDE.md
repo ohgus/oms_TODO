@@ -91,3 +91,11 @@ src/
 
 - 항상 작은 단위로 커밋한다
 - `prefix: name` 형식으로 작성한다
+
+## PR 규칙
+
+- **제목**: `[Prefix] 설명 (#이슈번호)` 형식으로 작성한다
+  - 브랜치 prefix → PR prefix 매핑: `fix/` → `[Fix]`, `feat/` → `[Feat]`, `refactor/` → `[Refactor]`, `style/` → `[Style]`, `chore/` → `[Chore]`, `docs/` → `[Docs]`, `test/` → `[Test]`
+  - 예: `[Fix] 모바일 DatePicker 호환성 수정 (#2)`
+- **본문**: `.github/PULL_REQUEST_TEMPLATE.md` 양식을 따른다
+- **연관 이슈**: `Closes #번호`를 사용하여 PR 머지 시 이슈 자동 종료

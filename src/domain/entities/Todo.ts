@@ -77,9 +77,7 @@ export function updateTodo(todo: Todo, input: UpdateTodoInput): Todo {
     categoryId: input.categoryId !== undefined ? input.categoryId : todo.categoryId,
     completed: input.completed !== undefined ? input.completed : todo.completed,
     priority: input.priority !== undefined ? input.priority : todo.priority,
-    dueDate: input.dueDate === null
-      ? undefined
-      : input.dueDate ?? todo.dueDate,
+    dueDate: input.dueDate === null ? undefined : (input.dueDate ?? todo.dueDate),
     updatedAt: new Date(),
   };
 }

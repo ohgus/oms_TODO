@@ -1,8 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { fn } from "@storybook/test";
-import { TodoList } from "./TodoList";
-import type { Todo } from "@domain/entities/Todo";
+
 import type { Category } from "@domain/entities/Category";
+import type { Todo } from "@domain/entities/Todo";
+
+import { TodoList } from "./TodoList";
 
 const meta = {
   title: "Components/Todo/TodoList",

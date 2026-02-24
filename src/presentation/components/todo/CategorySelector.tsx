@@ -1,4 +1,5 @@
 import type { Category } from "@domain/entities/Category";
+
 import { cn } from "@shared/utils/cn";
 
 interface CategorySelectorProps {

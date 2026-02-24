@@ -1,9 +1,10 @@
-import type { Todo } from "@domain/entities/Todo";
 import type { Category } from "@domain/entities/Category";
-import type { StatusFilter as StatusFilterType } from "@presentation/stores/uiStore";
-import { StatusFilter } from "@presentation/components/todo/StatusFilter";
+import type { Todo } from "@domain/entities/Todo";
+
 import { CategoryFilter } from "@presentation/components/category/CategoryFilter";
+import { StatusFilter } from "@presentation/components/todo/StatusFilter";
 import { TodoList } from "@presentation/components/todo/TodoList";
+import type { StatusFilter as StatusFilterType } from "@presentation/stores/uiStore";
 
 export interface TodayViewProps {
   todos: Todo[];

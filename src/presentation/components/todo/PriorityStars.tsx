@@ -1,4 +1,5 @@
 import { Star } from "lucide-react";
+
 import type { Priority } from "@domain/entities/Todo";
 
 interface PriorityStarsProps {
@@ -16,11 +17,7 @@ export function PriorityStars({ level }: PriorityStarsProps) {
             data-testid="star-filled"
           />
         ) : (
-          <Star
-            key={i}
-            className="h-3 w-3 fill-none text-star-empty"
-            data-testid="star-empty"
-          />
+          <Star key={i} className="h-3 w-3 fill-none text-star-empty" data-testid="star-empty" />
         )
       )}
     </div>

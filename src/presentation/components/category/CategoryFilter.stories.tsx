@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { fn } from "@storybook/test";
-import { CategoryFilter } from "./CategoryFilter";
+
 import type { Category } from "@domain/entities/Category";
+
+import { CategoryFilter } from "./CategoryFilter";
 
 const meta = {
   title: "Components/Category/CategoryFilter",

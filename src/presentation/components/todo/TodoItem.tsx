@@ -1,10 +1,13 @@
 import { Pencil, Trash2 } from "lucide-react";
+
 import type { Todo } from "@domain/entities/Todo";
+
+import { DateBadge } from "@presentation/components/common/DateBadge";
+import { PriorityStars } from "@presentation/components/todo/PriorityStars";
+import { Badge } from "@presentation/components/ui/badge";
 import { Button } from "@presentation/components/ui/button";
 import { Checkbox } from "@presentation/components/ui/checkbox";
-import { Badge } from "@presentation/components/ui/badge";
-import { PriorityStars } from "@presentation/components/todo/PriorityStars";
-import { DateBadge } from "@presentation/components/common/DateBadge";
+
 import { cn } from "@shared/utils/cn";
 
 export interface TodoItemProps {
@@ -25,9 +28,15 @@ export function TodoItem({
   categoryColor,
 }: TodoItemProps) {
   return (
-    <div className="flex flex-col gap-2 p-3 bg-bg-surface rounded-lg border sm:flex-row sm:items-center sm:gap-4" data-testid="todo-item">
+    <div
+      className="flex flex-col gap-2 p-3 bg-bg-surface rounded-lg border sm:flex-row sm:items-center sm:gap-4"
+      data-testid="todo-item"
+    >
       <div className="flex items-center gap-3 flex-1 min-w-0">
-        <div data-testid="checkbox-wrapper" className="flex items-center justify-center min-h-11 min-w-11">
+        <div
+          data-testid="checkbox-wrapper"
+          className="flex items-center justify-center min-h-11 min-w-11"
+        >
           <Checkbox
             checked={todo.completed}
             onCheckedChange={() => onToggleComplete(todo.id)}
@@ -46,9 +55,7 @@ export function TodoItem({
           >
             {todo.title}
           </p>
-          {todo.dueDate && (
-            <DateBadge date={todo.dueDate} className="mt-0.5" />
-          )}
+          {todo.dueDate && <DateBadge date={todo.dueDate} className="mt-0.5" />}
         </div>
       </div>
 

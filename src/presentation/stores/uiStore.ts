@@ -1,4 +1,5 @@
 import { create } from "zustand";
+
 import type { Todo } from "@domain/entities/Todo";
 
 export type StatusFilter = "all" | "active" | "completed";

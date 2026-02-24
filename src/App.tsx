@@ -1,5 +1,6 @@
-import { QueryProvider } from "@presentation/providers/QueryProvider";
 import { HomePage } from "@presentation/pages/HomePage";
+import { QueryProvider } from "@presentation/providers/QueryProvider";
+
 import { getContainer } from "@infrastructure/di/container";
 
 function App() {

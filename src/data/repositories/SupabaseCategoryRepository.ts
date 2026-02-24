@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+
 import type { Category } from "@domain/entities/Category";
 import type { ICategoryRepository } from "@domain/repositories/ICategoryRepository";
 
@@ -44,11 +45,7 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
   }
 
   async findById(id: string): Promise<Category | null> {
-    const { data, error } = await this.client
-      .from(this.tableName)
-      .select()
-      .eq("id", id)
-      .single();
+    const { data, error } = await this.client.from(this.tableName).select().eq("id", id).single();
 
     if (error) {
       if (error.code === "PGRST116") {
