@@ -1,20 +1,22 @@
 import { useState } from "react";
-import type { Todo, Priority } from "@domain/entities/Todo";
+
 import type { Category } from "@domain/entities/Category";
+import type { Priority, Todo } from "@domain/entities/Todo";
 import type { UpdateTodoInput } from "@domain/entities/Todo";
-import { PrioritySelector } from "@presentation/components/todo/PrioritySelector";
-import { CategorySelector } from "@presentation/components/todo/CategorySelector";
+
 import { DatePicker } from "@presentation/components/common/DatePicker";
+import { CategorySelector } from "@presentation/components/todo/CategorySelector";
+import { PrioritySelector } from "@presentation/components/todo/PrioritySelector";
+import { Button } from "@presentation/components/ui/button";
 import {
   Drawer,
   DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
   DrawerDescription,
   DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
 } from "@presentation/components/ui/drawer";
 import { Input } from "@presentation/components/ui/input";
-import { Button } from "@presentation/components/ui/button";
 
 export interface TodoEditModalProps {
   todo: Todo | null;
@@ -23,22 +25,12 @@ export interface TodoEditModalProps {
   categories: Category[];
 }
 
-export function TodoEditModal({
-  todo,
-  onOpenChange,
-  onSubmit,
-  categories,
-}: TodoEditModalProps) {
+export function TodoEditModal({ todo, onOpenChange, onSubmit, categories }: TodoEditModalProps) {
   return (
     <Drawer open={todo !== null} onOpenChange={onOpenChange}>
       <DrawerContent>
         {todo && (
-          <TodoEditForm
-            key={todo.id}
-            todo={todo}
-            onSubmit={onSubmit}
-            categories={categories}
-          />
+          <TodoEditForm key={todo.id} todo={todo} onSubmit={onSubmit} categories={categories} />
         )}
       </DrawerContent>
     </Drawer>
@@ -72,9 +64,7 @@ function TodoEditForm({ todo, onSubmit, categories }: TodoEditFormProps) {
     <>
       <DrawerHeader>
         <DrawerTitle>TODO 수정</DrawerTitle>
-        <DrawerDescription className="sr-only">
-          할 일을 수정합니다
-        </DrawerDescription>
+        <DrawerDescription className="sr-only">할 일을 수정합니다</DrawerDescription>
       </DrawerHeader>
 
       <div className="px-4 space-y-4">
@@ -88,26 +78,18 @@ function TodoEditForm({ todo, onSubmit, categories }: TodoEditFormProps) {
         />
 
         {/* Category */}
-        <CategorySelector
-          categories={categories}
-          value={categoryId}
-          onChange={setCategoryId}
-        />
+        <CategorySelector categories={categories} value={categoryId} onChange={setCategoryId} />
 
         {/* Priority */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-txt-secondary">
-            중요도
-          </label>
+          <label className="text-sm font-medium text-txt-secondary">중요도</label>
           <PrioritySelector value={priority} onChange={setPriority} />
         </div>
 
         {/* Due Date */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-txt-secondary">
-            마감일
-          </label>
-          <DatePicker value={dueDate} onChange={setDueDate} />
+          <label className="text-sm font-medium text-txt-secondary">마감일</label>
+          <DatePicker id="todo-due-date" value={dueDate} onChange={setDueDate} />
         </div>
       </div>
 

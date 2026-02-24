@@ -1,20 +1,22 @@
 import { useState } from "react";
+
 import type { Category } from "@domain/entities/Category";
 import type { Priority } from "@domain/entities/Todo";
 import { DEFAULT_PRIORITY } from "@domain/entities/Todo";
-import { PrioritySelector } from "@presentation/components/todo/PrioritySelector";
-import { CategorySelector } from "@presentation/components/todo/CategorySelector";
+
 import { DatePicker } from "@presentation/components/common/DatePicker";
+import { CategorySelector } from "@presentation/components/todo/CategorySelector";
+import { PrioritySelector } from "@presentation/components/todo/PrioritySelector";
+import { Button } from "@presentation/components/ui/button";
 import {
   Drawer,
   DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
   DrawerDescription,
   DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
 } from "@presentation/components/ui/drawer";
 import { Input } from "@presentation/components/ui/input";
-import { Button } from "@presentation/components/ui/button";
 
 export interface TodoAddFormData {
   title: string;
@@ -30,12 +32,7 @@ export interface TodoAddModalProps {
   categories: Category[];
 }
 
-export function TodoAddModal({
-  open,
-  onOpenChange,
-  onSubmit,
-  categories,
-}: TodoAddModalProps) {
+export function TodoAddModal({ open, onOpenChange, onSubmit, categories }: TodoAddModalProps) {
   const [title, setTitle] = useState("");
   const [categoryId, setCategoryId] = useState<string | undefined>(undefined);
   const [priority, setPriority] = useState<Priority>(DEFAULT_PRIORITY);
@@ -66,9 +63,7 @@ export function TodoAddModal({
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>TODO 추가</DrawerTitle>
-          <DrawerDescription className="sr-only">
-            새로운 할 일을 추가합니다
-          </DrawerDescription>
+          <DrawerDescription className="sr-only">새로운 할 일을 추가합니다</DrawerDescription>
         </DrawerHeader>
 
         <div className="px-4 space-y-4">
@@ -83,26 +78,18 @@ export function TodoAddModal({
           />
 
           {/* Category */}
-          <CategorySelector
-            categories={categories}
-            value={categoryId}
-            onChange={setCategoryId}
-          />
+          <CategorySelector categories={categories} value={categoryId} onChange={setCategoryId} />
 
           {/* Priority */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-txt-secondary">
-              중요도
-            </label>
+            <label className="text-sm font-medium text-txt-secondary">중요도</label>
             <PrioritySelector value={priority} onChange={setPriority} />
           </div>
 
           {/* Due Date */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-txt-secondary">
-              마감일
-            </label>
-            <DatePicker value={dueDate} onChange={setDueDate} />
+            <label className="text-sm font-medium text-txt-secondary">마감일</label>
+            <DatePicker id="todo-due-date" value={dueDate} onChange={setDueDate} />
           </div>
         </div>
 
